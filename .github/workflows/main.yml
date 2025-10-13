@@ -1,6 +1,8 @@
+name: Aura Market Daily Update
+
 on:
   schedule:
-    # Runs at 06:30 UTC, which is 12:00 PM IST
+    # Runs at 15:08 UTC, which is 8:38 PM IST
     - cron: '08 15 * * *'
   workflow_dispatch: # Allows manual running from the Actions tab
 
@@ -8,8 +10,12 @@ jobs:
   update-scores:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
+    - name: Check out repository (with write permission)
       uses: actions/checkout@v3
+      with:
+        # यह `GITHUB_TOKEN` पास करता है, जिससे 'Commit and push changes' स्टेप को 
+        # रिपॉजिटरी में लिखने की अनुमति मिल जाती है, और Error 403 दूर हो जाती है।
+        token: ${{ secrets.GITHUB_TOKEN }} 
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -23,13 +29,18 @@ jobs:
 
     - name: Run update script
       env:
+        # यह Key Python स्क्रिप्ट को पास की जाती है।
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
     - name: Commit and push changes
+      # यह स्टेप अब सफलतापूर्वक चलेगा क्योंकि ऊपर 'checkout' में token पास किया गया है।
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        # केवल तभी कमिट करें जब data.json में बदलाव हो
         git add data.json
         git diff --quiet && git diff --staged --quiet || git commit -m "📈 Aura Market Daily Update"
+        # Push using the token's permission
         git push
+
