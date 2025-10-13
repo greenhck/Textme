@@ -9,58 +9,68 @@ API_KEY = os.getenv('AIzaSyCzlxGc7IVAdIlpYyNulBgdfCESsFG2zd0')
 if not API_KEY:
     raise ValueError("GEMINI_API_KEY secret not found!")
 
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=AIzaSyCzlxGc7IVAdIlpYyNulBgdfCESsFG2zd0)
 
-def get_aura_change_prompt(celebrity_name):
+def get_bulk_aura_change_prompt(celebrity_names):
     """
-    Generates a precise prompt to get a numerical market-like change.
+    Generates a single, powerful prompt to get data for all celebrities at once.
     """
+    # Create a comma-separated string of names for the prompt
+    names_string = ", ".join(celebrity_names)
+    
     return (f"Analyze all significant positive and negative news, professional activities, "
-            f"social media sentiment, and public statements related to '{celebrity_name}' "
-            f"over the last 24 hours. Based on the overall real-world impact, generate a "
-            f"single numerical value representing the change in their 'Aura Score'. "
-            f"For example: a major hit movie could be +50. A minor brand deal +5. "
-            f"A major public controversy could be -70. A small gaffe -3. "
-            f"The output must be ONLY the final integer or float number. No text.")
+            f"social media sentiment, and public statements for the following celebrities "
+            f"over the last 24 hours: {names_string}. "
+            f"Based on the overall real-world impact for EACH celebrity, generate a single numerical "
+            f"value representing the change in their 'Aura Score'. For example: a major movie hit could be +50, "
+            f"a major public controversy could be -70, a minor brand deal +5, a small gaffe -3. "
+            f"Provide the output as a single, valid JSON object where the keys are the celebrity names "
+            f"(exactly as provided) and the values are their calculated numerical aura change. "
+            f"The output MUST BE ONLY THE JSON OBJECT and nothing else. "
+            f"Example format: {{\"Shah Rukh Khan\": 15.5, \"Virat Kohli\": -20.0, ...}}")
 
 def update_aura_scores():
     """
-    Fetches celebrity data, gets aura change from Gemini, and updates the data.json file.
+    Fetches celebrity data, gets all aura changes in a single API call, and updates data.json.
     """
     try:
         with open('data.json', 'r+') as f:
             data = json.load(f)
             celebrities = data.get('celebrities', [])
+            
+            # 1. Get a list of all celebrity names
+            celebrity_names = [celeb['name'] for celeb in celebrities]
+            
+            if not celebrity_names:
+                print("No celebrities found in data.json. Exiting.")
+                return
 
+            # 2. Make ONE single API call for all celebrities
+            print("Making a single API call for all celebrities...")
             model = genai.GenerativeModel('gemini-pro')
+            prompt = get_bulk_aura_change_prompt(celebrity_names)
+            response = model.generate_content(prompt)
+            
+            # 3. Parse the JSON response from the API
+            # The response text might be enclosed in markdown ```json ... ```, so we clean it.
+            cleaned_response_text = response.text.strip().replace('```json', '').replace('```', '').strip()
+            aura_changes = json.loads(cleaned_response_text)
+            print("Successfully received and parsed bulk aura changes.")
 
+            # 4. Loop through celebrities and update their data
             for celeb in celebrities:
-                try:
-                    prompt = get_aura_change_prompt(celeb['name'])
-                    response = model.generate_content(prompt)
-                    
-                    # Parse the numerical change from the API response
-                    aura_change = float(response.text.strip())
-                    
-                    # Update scores
-                    celeb['previous_aura_score'] = celeb['aura_score']
-                    celeb['aura_score'] = round(celeb['aura_score'] + aura_change, 2)
-                    
-                    # Update 7-day trend data
-                    trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
-                    trend.pop(0)  # Remove the oldest data point
-                    trend.append(celeb['aura_score']) # Add the new data point
-                    celeb['trend_7_days'] = trend
-
-                except (ValueError, IndexError) as e:
-                    print(f"Could not parse score for {celeb['name']}. Response: '{response.text}'. Error: {e}")
-                    # If API fails, we keep the score unchanged for stability
-                    celeb['previous_aura_score'] = celeb['aura_score']
-                    trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
-                    trend.pop(0)
-                    trend.append(celeb['aura_score'])
-                    celeb['trend_7_days'] = trend
-
+                # Get the change from the parsed response. Default to 0 if a name is missing.
+                aura_change = aura_changes.get(celeb['name'], 0.0)
+                
+                # Update scores
+                celeb['previous_aura_score'] = celeb['aura_score']
+                celeb['aura_score'] = round(celeb['aura_score'] + float(aura_change), 2)
+                
+                # Update 7-day trend data
+                trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
+                trend.pop(0)  # Remove the oldest data point
+                trend.append(celeb['aura_score']) # Add the new data point
+                celeb['trend_7_days'] = trend
 
             # Update the timestamp
             ist = pytz.timezone('Asia/Kolkata')
@@ -71,8 +81,10 @@ def update_aura_scores():
             json.dump(data, f, indent=4)
             f.truncate()
             
-        print("Aura Market data updated successfully.")
+        print("Aura Market data updated successfully using a single API call.")
 
+    except json.JSONDecodeError as e:
+        print(f"CRITICAL ERROR: Failed to parse JSON response from API. The response was:\n{response.text}\nError: {e}")
     except Exception as e:
         print(f"A critical error occurred: {e}")
 
