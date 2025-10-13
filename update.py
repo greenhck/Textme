@@ -1,47 +1,80 @@
 import os
 import json
+from datetime import datetime
+import pytz
 import google.generativeai as genai
 
-# Configure the Gemini API with your key
-# It's recommended to set this as an environment variable for security
-genai.configure(api_key="YOUR_GEMINI_API_KEY") # Replace with your actual key
+# Fetch API key from GitHub Secrets
+API_KEY = os.getenv('GEMINI_API_KEY')
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY secret not found!")
 
-def get_aura_update_prompt(celebrity_name):
-    """Generates the prompt for the Gemini API."""
-    return f"Analyze the recent news, social media mentions, and professional activities for {celebrity_name}. Based on this, provide a numerical sentiment score between -10 and 10, where -10 is extremely negative, 0 is neutral, and 10 is extremely positive. The output should be just the number."
+genai.configure(api_key=API_KEY)
+
+def get_aura_change_prompt(celebrity_name):
+    """
+    Generates a precise prompt to get a numerical market-like change.
+    """
+    return (f"Analyze all significant positive and negative news, professional activities, "
+            f"social media sentiment, and public statements related to '{celebrity_name}' "
+            f"over the last 24 hours. Based on the overall real-world impact, generate a "
+            f"single numerical value representing the change in their 'Aura Score'. "
+            f"For example: a major hit movie could be +50. A minor brand deal +5. "
+            f"A major public controversy could be -70. A small gaffe -3. "
+            f"The output must be ONLY the final integer or float number. No text.")
 
 def update_aura_scores():
-    """Fetches celebrity data, gets updates from Gemini, and updates the data.json file."""
+    """
+    Fetches celebrity data, gets aura change from Gemini, and updates the data.json file.
+    """
     try:
         with open('data.json', 'r+') as f:
-            celebrities = json.load(f)
+            data = json.load(f)
+            celebrities = data.get('celebrities', [])
 
-            for celebrity in celebrities:
-                prompt = get_aura_update_prompt(celebrity['name'])
-                model = genai.GenerativeModel('gemini-pro')
-                response = model.generate_content(prompt)
-                
+            model = genai.GenerativeModel('gemini-pro')
+
+            for celeb in celebrities:
                 try:
-                    sentiment_score = float(response.text)
+                    prompt = get_aura_change_prompt(celeb['name'])
+                    response = model.generate_content(prompt)
                     
-                    # Update previous aura score and calculate the new one
-                    celebrity['previous_aura_score'] = celebrity['aura_score']
+                    # Parse the numerical change from the API response
+                    aura_change = float(response.text.strip())
                     
-                    # More complex logic can be added here
-                    new_aura_score = celebrity['aura_score'] + (sentiment_score * 0.1) # The multiplier can be adjusted
-                    celebrity['aura_score'] = round(new_aura_score, 2)
+                    # Update scores
+                    celeb['previous_aura_score'] = celeb['aura_score']
+                    celeb['aura_score'] = round(celeb['aura_score'] + aura_change, 2)
+                    
+                    # Update 7-day trend data
+                    trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
+                    trend.pop(0)  # Remove the oldest data point
+                    trend.append(celeb['aura_score']) # Add the new data point
+                    celeb['trend_7_days'] = trend
 
-                except ValueError:
-                    print(f"Could not parse sentiment score for {celebrity['name']}. Received: {response.text}")
+                except (ValueError, IndexError) as e:
+                    print(f"Could not parse score for {celeb['name']}. Response: '{response.text}'. Error: {e}")
+                    # If API fails, we keep the score unchanged for stability
+                    celeb['previous_aura_score'] = celeb['aura_score']
+                    trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
+                    trend.pop(0)
+                    trend.append(celeb['aura_score'])
+                    celeb['trend_7_days'] = trend
 
+
+            # Update the timestamp
+            ist = pytz.timezone('Asia/Kolkata')
+            data['last_updated'] = datetime.now(ist).strftime('%d-%m-%Y %H:%M:%S')
+
+            # Write back the updated data
             f.seek(0)
-            json.dump(celebrities, f, indent=4)
+            json.dump(data, f, indent=4)
             f.truncate()
-
-        print("Aura scores updated successfully.")
+            
+        print("Aura Market data updated successfully.")
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"A critical error occurred: {e}")
 
 if __name__ == '__main__':
     update_aura_scores()
