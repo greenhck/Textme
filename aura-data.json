@@ -1,56 +1,23 @@
 {
-  "lastUpdated": "2025-10-13T12:00:00+05:30",
-  "celebrities": [
-    {"name": "Virat Kohli", "aura": 2845.77, "change": 25.12, "trend": "up", "vibe": "▲ 0.89%", "history": [2805, 2810, 2808, 2815, 2820, 2820, 2845]},
-    {"name": "Cristiano Ronaldo", "aura": 2810.45, "change": -11.50, "trend": "down", "vibe": "▼ 0.41%", "history": [2830, 2825, 2835, 2828, 2822, 2821, 2810]},
-    {"name": "Shah Rukh Khan", "aura": 2755.19, "change": 42.88, "trend": "up", "vibe": "▲ 1.58%", "history": [2690, 2705, 2700, 2710, 2712, 2712, 2755]},
-    {"name": "Taylor Swift", "aura": 2710.92, "change": -5.20, "trend": "down", "vibe": "▼ 0.19%", "history": [2700, 2708, 2715, 2720, 2718, 2716, 2710]},
-    {"name": "Elon Musk", "aura": 2680.33, "change": -55.67, "trend": "down", "vibe": "▼ 2.03%", "history": [2710, 2725, 2740, 2750, 2745, 2736, 2680]},
-    {"name": "Lionel Messi", "aura": 2650.15, "change": 15.05, "trend": "up", "vibe": "▲ 0.57%", "history": [2610, 2618, 2625, 2630, 2635, 2635, 2650]},
-    {"name": "MrBeast", "aura": 2590.88, "change": 60.11, "trend": "up", "vibe": "▲ 2.37%", "history": [2510, 2515, 2520, 2525, 2530, 2530, 2590]},
-    {"name": "Dwayne Johnson", "aura": 2488.40, "change": -2.30, "trend": "down", "vibe": "▼ 0.09%", "history": [2495, 2492, 2498, 2491, 2490, 2490, 2488]},
-    {"name": "Zendaya", "aura": 2450.76, "change": 18.99, "trend": "up", "vibe": "▲ 0.78%", "history": [2410, 2415, 2420, 2428, 2432, 2431, 2450]},
-    {"name": "Beyoncé", "aura": 2421.18, "change": -8.44, "trend": "down", "vibe": "▼ 0.35%", "history": [2435, 2430, 2438, 2432, 2429, 2429, 2421]},
-    {"name": "LeBron James", "aura": 2390.55, "change": 12.10, "trend": "up", "vibe": "▲ 0.51%", "history": [2360, 2365, 2370, 2372, 2378, 2378, 2390]},
-    {"name": "Tom Holland", "aura": 2355.62, "change": 5.25, "trend": "up", "vibe": "▲ 0.22%", "history": [2340, 2342, 2348, 2350, 2350, 2350, 2355]},
-    {"name": "Kylie Jenner", "aura": 2310.89, "change": -20.00, "trend": "down", "vibe": "▼ 0.86%", "history": [2340, 2335, 2338, 2332, 2330, 2330, 2310]},
-    {"name": "Drake", "aura": 2280.14, "change": 2.75, "trend": "up", "vibe": "▲ 0.12%", "history": [2270, 2275, 2272, 2278, 2277, 2277, 2280]},
-    {"name": "Margot Robbie", "aura": 2255.99, "change": 30.15, "trend": "up", "vibe": "▲ 1.35%", "history": [2210, 2215, 2220, 2222, 2225, 2225, 2255]},
-    {"name": "Arijit Singh", "aura": 2234.50, "change": 15.20, "trend": "up", "vibe": "▲ 0.68%", "history": [2210, 2212, 2215, 2218, 2219, 2219, 2234]},
-    {"name": "Bad Bunny", "aura": 2210.30, "change": -4.80, "trend": "down", "vibe": "▼ 0.22%", "history": [2220, 2215, 2218, 2212, 2215, 2215, 2210]},
-    {"name": "Narendra Modi", "aura": 2180.70, "change": -15.40, "trend": "down", "vibe": "▼ 0.70%", "history": [2200, 2195, 2205, 2198, 2195, 2196, 2180]},
-    {"name": "Jeff Bezos", "aura": 2155.25, "change": 22.10, "trend": "up", "vibe": "▲ 1.03%", "history": [2120, 2125, 2130, 2132, 2133, 2133, 2155]},
-    {"name": "Tim Cook", "aura": 2130.90, "change": 8.50, "trend": "up", "vibe": "▲ 0.40%", "history": [2115, 2118, 2120, 2122, 2122, 2122, 2130]},
-    {"name": "Serena Williams", "aura": 2095.10, "change": 10.00, "trend": "up", "vibe": "▲ 0.48%", "history": [2080, 2082, 2085, 2084, 2085, 2085, 2095]},
-    {"name": "Roger Federer", "aura": 2077.40, "change": 5.30, "trend": "up", "vibe": "▲ 0.26%", "history": [2065, 2068, 2070, 2072, 2072, 2072, 2077]},
-    {"name": "Rihanna", "aura": 2050.60, "change": -9.10, "trend": "down", "vibe": "▼ 0.44%", "history": [2065, 2060, 2062, 2058, 2059, 2059, 2050]},
-    {"name": "Kim Kardashian", "aura": 2021.80, "change": -18.20, "trend": "down", "vibe": "▼ 0.89%", "history": [2045, 2040, 2042, 2038, 2040, 2040, 2021]},
-    {"name": "Leonardo DiCaprio", "aura": 1999.99, "change": 12.80, "trend": "up", "vibe": "▲ 0.64%", "history": [1980, 1982, 1985, 1987, 1987, 1987, 1999]},
-    {"name": "Shubman Gill", "aura": 1975.55, "change": 25.45, "trend": "up", "vibe": "▲ 1.31%", "history": [1940, 1945, 1948, 1950, 1950, 1950, 1975]},
-    {"name": "Alia Bhatt", "aura": 1950.22, "change": 18.90, "trend": "up", "vibe": "▲ 0.98%", "history": [1920, 1925, 1928, 1931, 1931, 1931, 1950]},
-    {"name": "Ryan Reynolds", "aura": 1920.80, "change": 7.60, "trend": "up", "vibe": "▲ 0.40%", "history": [1910, 1912, 1915, 1913, 1913, 1913, 1920]},
-    {"name": "Chris Hemsworth", "aura": 1895.40, "change": 2.10, "trend": "up", "vibe": "▲ 0.11%", "history": [1890, 1892, 1891, 1893, 1893, 1893, 1895]},
-    {"name": "The Weeknd", "aura": 1870.10, "change": -11.50, "trend": "down", "vibe": "▼ 0.61%", "history": [1885, 1880, 1882, 1878, 1881, 1881, 1870]},
-    {"name": "Ed Sheeran", "aura": 1845.90, "change": 1.40, "trend": "up", "vibe": "▲ 0.08%", "history": [1840, 1842, 1841, 1844, 1844, 1844, 1845]},
-    {"name": "Scarlett Johansson", "aura": 1822.30, "change": 4.80, "trend": "up", "vibe": "▲ 0.26%", "history": [1815, 1818, 1817, 1817, 1817, 1817, 1822]},
-    {"name": "Mark Zuckerberg", "aura": 1799.50, "change": -25.20, "trend": "down", "vibe": "▼ 1.38%", "history": [1830, 1825, 1828, 1822, 1824, 1824, 1799]},
-    {"name": "Sundar Pichai", "aura": 1777.80, "change": 10.10, "trend": "up", "vibe": "▲ 0.57%", "history": [1760, 1765, 1762, 1767, 1767, 1767, 1777]},
-    {"name": "BTS", "aura": 1750.40, "change": 22.90, "trend": "up", "vibe": "▲ 1.33%", "history": [1720, 1725, 1722, 1728, 1727, 1727, 1750]},
-    {"name": "BLACKPINK", "aura": 1725.10, "change": 18.60, "trend": "up", "vibe": "▲ 1.09%", "history": [1700, 1705, 1702, 1706, 1706, 1706, 1725]},
-    {"name": "Michael Jordan", "aura": 1699.90, "change": 2.50, "trend": "up", "vibe": "▲ 0.15%", "history": [1695, 1698, 1697, 1697, 1697, 1697, 1699]},
-    {"name": "Tom Brady", "aura": 1678.20, "change": -5.10, "trend": "down", "vibe": "▼ 0.30%", "history": [1685, 1682, 1683, 1680, 1683, 1683, 1678]},
-    {"name": "Lewis Hamilton", "aura": 1655.70, "change": 15.30, "trend": "up", "vibe": "▲ 0.93%", "history": [1635, 1638, 1640, 1640, 1640, 1640, 1655]},
-    {"name": "PewDiePie", "aura": 1630.50, "change": -8.80, "trend": "down", "vibe": "▼ 0.54%", "history": [1642, 1638, 1640, 1635, 1639, 1639, 1630]},
-    {"name": "Gigi Hadid", "aura": 1605.20, "change": 3.10, "trend": "up", "vibe": "▲ 0.19%", "history": [1600, 1602, 1601, 1602, 1602, 1602, 1605]},
-    {"name": "Kendall Jenner", "aura": 1588.90, "change": -4.20, "trend": "down", "vibe": "▼ 0.26%", "history": [1595, 1592, 1593, 1590, 1593, 1593, 1588]},
-    {"name": "Justin Bieber", "aura": 1565.40, "change": -10.80, "trend": "down", "vibe": "▼ 0.68%", "history": [1580, 1575, 1578, 1572, 1576, 1576, 1565]},
-    {"name": "Ariana Grande", "aura": 1544.70, "change": 5.90, "trend": "up", "vibe": "▲ 0.38%", "history": [1535, 1538, 1539, 1538, 1538, 1538, 1544]},
-    {"name": "Will Smith", "aura": 1520.10, "change": -15.60, "trend": "down", "vibe": "▼ 1.02%", "history": [1540, 1535, 1538, 1532, 1535, 1535, 1520]},
-    {"name": "Bill Gates", "aura": 1499.80, "change": 8.30, "trend": "up", "vibe": "▲ 0.55%", "history": [1488, 1490, 1492, 1491, 1491, 1491, 1499]},
-    {"name": "Joe Biden", "aura": 1470.20, "change": -22.10, "trend": "down", "vibe": "▼ 1.48%", "history": [1500, 1495, 1492, 1488, 1492, 1492, 1470]},
-    {"name": "Oprah Winfrey", "aura": 1450.50, "change": 11.70, "trend": "up", "vibe": "▲ 0.81%", "history": [1435, 1438, 1439, 1438, 1438, 1438, 1450]},
-    {"name": "Neeraj Chopra", "aura": 1433.90, "change": 30.20, "trend": "up", "vibe": "▲ 2.15%", "history": [1395, 1400, 1402, 1403, 1403, 1403, 1433]},
-    {"name": "Satya Nadella", "aura": 1410.60, "change": 12.40, "trend": "up", "vibe": "▲ 0.89%", "history": [1395, 1398, 1397, 1398, 1398, 1398, 1410]}
-  ]
+    "last_updated": "13-10-2025 12:00:00",
+    "celebrities": [
+        {
+            "name": "Shah Rukh Khan",
+            "aura_score": 1250.75,
+            "previous_aura_score": 1245.50,
+            "trend_7_days": [1210.00, 1215.25, 1230.50, 1225.00, 1240.75, 1245.50, 1250.75]
+        },
+        {
+            "name": "Virat Kohli",
+            "aura_score": 1502.20,
+            "previous_aura_score": 1515.80,
+            "trend_7_days": [1480.10, 1495.60, 1505.30, 1525.00, 1520.40, 1515.80, 1502.20]
+        },
+        {
+            "name": "Alia Bhatt",
+            "aura_score": 985.45,
+            "previous_aura_score": 970.15,
+            "trend_7_days": [950.00, 955.25, 960.90, 958.40, 965.00, 970.15, 985.45]
+        }
+    ]
 }
-
