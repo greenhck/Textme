@@ -4,68 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aura Market</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1E1E1E;
+            --text-color: #E0E0E0;
+            --border-color: #333333;
+            --positive-color: #00C853; /* A vibrant green */
+            --negative-color: #D50000; /* A strong red */
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 0;
         }
+
         .header {
-            background-color: #1E1E1E;
-            padding: 20px;
+            background-color: var(--surface-color);
+            padding: 15px 20px;
             text-align: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
+
         .header h1 {
             margin: 0;
-            font-size: 2.5em;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 1.8em;
+            font-weight: 500;
+            letter-spacing: 1px;
         }
+        
+        .last-updated {
+            font-size: 0.8em;
+            color: #888;
+        }
+
         .main-container {
-            padding: 20px;
+            padding: 10px;
         }
-        .celebrity-table {
+
+        .aura-table {
             width: 100%;
             border-collapse: collapse;
         }
-        .celebrity-table th, .celebrity-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #333;
+
+        .aura-table th, .aura-table td {
+            padding: 12px 10px;
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
         }
-        .celebrity-table th {
-            background-color: #1E1E1E;
-            font-size: 1.1em;
+
+        .aura-table th {
+            font-size: 0.9em;
+            color: #aaa;
             text-transform: uppercase;
+            font-weight: 600;
         }
-        .celebrity-table tbody tr:hover {
+        
+        .aura-table th.celeb-name-header, .aura-table td.celeb-name {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .aura-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .aura-table tbody tr:hover {
             background-color: #2a2a2a;
         }
+
         .aura-score {
             font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.1em;
         }
-        .aura-change.positive {
-            color: #4CAF50;
+
+        .change-values {
+            font-weight: 600;
+            width: 100px;
         }
-        .aura-change.negative {
-            color: #F44336;
+
+        .positive {
+            color: var(--positive-color);
         }
-        .footer {
-            background-color: #1E1E1E;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            border-top: 1px solid #333;
+
+        .negative {
+            color: var(--negative-color);
         }
-        .footer p {
-            margin: 0;
-            font-size: 0.9em;
+
+        .chart-container {
+            width: 120px; /* Width for the small trend chart */
+            height: 40px;
+        }
+
+        /* Mobile Responsive Shortcuts */
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px;
+            }
+            .header h1 {
+                font-size: 1.5em;
+            }
+            .aura-table th, .aura-table td {
+                padding: 10px 5px;
+            }
+            .chart-container {
+                width: 80px;
+            }
+            .aura-table th:nth-child(4), /* Hides the TC column on small screens */
+            .aura-table td:nth-child(4) {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -73,63 +128,114 @@
 
     <header class="header">
         <h1>Aura Market</h1>
+        <div class="last-updated">Last Updated: <span id="update-time">--:--</span> IST</div>
     </header>
 
     <main class="main-container">
-        <table class="celebrity-table">
+        <table class="aura-table">
             <thead>
                 <tr>
-                    <th>Celebrity</th>
-                    <th>Profession</th>
-                    <th>Aura Score</th>
-                    <th>Change</th>
-                    <th>Socials</th>
+                    <th class="celeb-name-header">Celebrity</th>
+                    <th>Aura Score (AS)</th>
+                    <th>Change % (CP)</th>
+                    <th>Today's Change (TC)</th>
+                    <th>7-Day Trend</th>
                 </tr>
             </thead>
-            <tbody id="celebrity-data">
-                <!-- Data will be inserted here by JavaScript -->
+            <tbody id="aura-data">
+                <!-- Data will be dynamically inserted here -->
             </tbody>
         </table>
     </main>
 
-    <footer class="footer">
-        <p>&copy; 2025 Aura Market. All Rights Reserved.</p>
-    </footer>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchData();
-            setInterval(fetchData, 60000); // Refresh data every minute
-        });
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        const chartInstances = {};
 
         async function fetchData() {
             try {
-                const response = await fetch('data.json');
-                const celebrities = await response.json();
-                const celebrityTableBody = document.getElementById('celebrity-data');
-                celebrityTableBody.innerHTML = ''; // Clear existing data
+                // Add a cache-busting parameter to ensure fresh data
+                const response = await fetch(`data.json?v=${new Date().getTime()}`);
+                const data = await response.json();
+                const tableBody = document.getElementById('aura-data');
+                tableBody.innerHTML = ''; // Clear old data
 
-                celebrities.forEach(celebrity => {
+                document.getElementById('update-time').textContent = data.last_updated;
+
+                data.celebrities.forEach((celeb, index) => {
                     const row = document.createElement('tr');
 
-                    const change = celebrity.aura_score - celebrity.previous_aura_score;
-                    const changeClass = change >= 0 ? 'positive' : 'negative';
-                    const changeSymbol = change >= 0 ? '▲' : '▼';
+                    const todayChange = celeb.aura_score - celeb.previous_aura_score;
+                    const changePercentage = celeb.previous_aura_score === 0 ? 0 : (todayChange / celeb.previous_aura_score) * 100;
+                    const changeClass = todayChange >= 0 ? 'positive' : 'negative';
+                    const sign = todayChange >= 0 ? '+' : '';
+
+                    const chartId = `chart-${index}`;
 
                     row.innerHTML = `
-                        <td>${celebrity.name}</td>
-                        <td>${celebrity.profession}</td>
-                        <td class="aura-score">${celebrity.aura_score.toFixed(2)}</td>
-                        <td class="aura-change ${changeClass}">${changeSymbol} ${Math.abs(change).toFixed(2)}</td>
+                        <td class="celeb-name">${celeb.name}</td>
+                        <td class="aura-score">${celeb.aura_score.toFixed(2)}</td>
+                        <td class="change-values ${changeClass}">${sign}${changePercentage.toFixed(2)}%</td>
+                        <td class="change-values ${changeClass}">${sign}${todayChange.toFixed(2)}</td>
                         <td>
-                            <a href="${celebrity.twitter}" target="_blank" rel="noopener noreferrer">Twitter</a>
+                            <div class="chart-container">
+                                <canvas id="${chartId}"></canvas>
+                            </div>
                         </td>
                     `;
-                    celebrityTableBody.appendChild(row);
+                    tableBody.appendChild(row);
+
+                    // Defer chart rendering to avoid blocking the UI
+                    requestAnimationFrame(() => {
+                        renderChart(chartId, celeb.trend_7_days, changeClass);
+                    });
                 });
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching Aura Market data:', error);
             }
+        }
+
+        function renderChart(canvasId, trendData, changeClass) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const chartColor = changeClass === 'positive' ? 'rgba(0, 200, 83, 0.8)' : 'rgba(213, 0, 0, 0.8)';
+            const gradient = ctx.createLinearGradient(0, 0, 0, 40);
+            gradient.addColorStop(0, changeClass === 'positive' ? 'rgba(0, 200, 83, 0.3)' : 'rgba(213, 0, 0, 0.3)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0)');
+
+
+            // Destroy previous chart instance if it exists to prevent memory leaks
+            if (chartInstances[canvasId]) {
+                chartInstances[canvasId].destroy();
+            }
+
+            chartInstances[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(trendData.length).fill(''), // No labels on x-axis
+                    datasets: [{
+                        data: trendData,
+                        borderColor: chartColor,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0, // No points on the line
+                        fill: true,
+                        backgroundColor: gradient,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
         }
     </script>
 </body>
