@@ -3,13 +3,22 @@ import json
 from datetime import datetime
 import pytz
 import google.generativeai as genai
+from google.generativeai import types # Added 'types' for completeness if needed later
 
-# Fetch API key from GitHub Secrets
+# --- Configuration ---
+# Fetch API key from GitHub Secrets (stored in API_KEY Python variable)
 API_KEY = os.getenv('GEMINI_API_KEY')
 if not API_KEY:
+    # This ValueError is correctly raised if the secret is not found in GitHub Actions
     raise ValueError("GEMINI_API_KEY secret not found!")
 
-genai.configure(api_key=GEMINI_API_KEY)
+# *** FIX APPLIED HERE: Using API_KEY variable instead of the environment variable name ***
+genai.configure(api_key=API_KEY)
+
+# Use the most efficient model for batch analysis to save quota and time
+MODEL_NAME = 'gemini-2.5-flash-lite' 
+# --- End Configuration ---
+
 
 def get_bulk_aura_change_prompt(celebrity_names):
     """
@@ -46,8 +55,12 @@ def update_aura_scores():
                 return
 
             # 2. Make ONE single API call for all celebrities
-            print("Making a single API call for all celebrities...")
-            model = genai.GenerativeModel('gemini-pro')
+            print(f"Making a single API call using {MODEL_NAME} for all celebrities...")
+            
+            # Initialize the model instance using the efficient model
+            client = genai.Client()
+            model = client.models.get(model=MODEL_NAME)
+
             prompt = get_bulk_aura_change_prompt(celebrity_names)
             response = model.generate_content(prompt)
             
@@ -59,11 +72,12 @@ def update_aura_scores():
 
             # 4. Loop through celebrities and update their data
             for celeb in celebrities:
-                # Get the change from the parsed response. Default to 0 if a name is missing.
+                # Get the change from the parsed response. Default to 0.0 if a name is missing.
                 aura_change = aura_changes.get(celeb['name'], 0.0)
                 
                 # Update scores
                 celeb['previous_aura_score'] = celeb['aura_score']
+                # Ensure aura_change is treated as float for calculation
                 celeb['aura_score'] = round(celeb['aura_score'] + float(aura_change), 2)
                 
                 # Update 7-day trend data
@@ -84,9 +98,11 @@ def update_aura_scores():
         print("Aura Market data updated successfully using a single API call.")
 
     except json.JSONDecodeError as e:
-        print(f"CRITICAL ERROR: Failed to parse JSON response from API. The response was:\n{response.text}\nError: {e}")
+        # If Gemini returns garbage text instead of JSON, print the response for debugging
+        print(f"CRITICAL ERROR: Failed to parse JSON response from API. Response text was:\n{response.text[:500]}...\nError: {e}")
     except Exception as e:
         print(f"A critical error occurred: {e}")
 
 if __name__ == '__main__':
     update_aura_scores()
+
