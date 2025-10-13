@@ -12,9 +12,8 @@ jobs:
     steps:
     - name: Check out repository (with write permission)
       uses: actions/checkout@v3
+      # GITHUB_TOKEN को पास करें ताकि write permission मिल सके
       with:
-        # यह `GITHUB_TOKEN` पास करता है, जिससे 'Commit and push changes' स्टेप को 
-        # रिपॉजिटरी में लिखने की अनुमति मिल जाती है, और Error 403 दूर हो जाती है।
         token: ${{ secrets.GITHUB_TOKEN }} 
 
     - name: Set up Python
@@ -28,19 +27,24 @@ jobs:
         pip install google-generativeai python-dateutil pytz
 
     - name: Run update script
+      # यह env: ब्लॉक GEMINI_API_KEY को python script के लिए उपलब्ध कराता है
       env:
-        # यह Key Python स्क्रिप्ट को पास की जाती है।
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
     - name: Commit and push changes
-      # यह स्टेप अब सफलतापूर्वक चलेगा क्योंकि ऊपर 'checkout' में token पास किया गया है।
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        # केवल तभी कमिट करें जब data.json में बदलाव हो
         git add data.json
+        
+        # 🚨 FINAL FIX: Push करने से पहले रिमोट में हुए किसी भी बदलाव को सिंक करें। 
+        # यह "rejected" एरर को हल करता है।
+        git pull --rebase origin main 
+        
+        # केवल तभी कमिट करें जब data.json में बदलाव हो (यह देखने के लिए कि टाइमस्टैम्प बदला है या नहीं)
         git diff --quiet && git diff --staged --quiet || git commit -m "📈 Aura Market Daily Update"
-        # Push using the token's permission
+        
+        # Push करें
         git push
 
