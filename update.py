@@ -5,7 +5,7 @@ import pytz
 import google.generativeai as genai
 
 # Fetch API key from GitHub Secrets
-API_KEY = os.getenv('GEMINI_API_KEY')
+API_KEY = os.getenv('AIzaSyCzlxGc7IVAdIlpYyNulBgdfCESsFG2zd0')
 if not API_KEY:
     raise ValueError("GEMINI_API_KEY secret not found!")
 
