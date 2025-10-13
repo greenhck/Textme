@@ -1,7 +1,7 @@
 on:
   schedule:
     # Runs at 06:30 UTC, which is 12:00 PM IST
-    - cron: '30 6 * * *'
+    - cron: '02 15 * * *'
   workflow_dispatch: # Allows manual running from the Actions tab
 
 jobs:
