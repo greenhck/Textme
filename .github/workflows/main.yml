@@ -2,19 +2,23 @@ name: Aura Market Daily Update
 
 on:
   schedule:
-    # Runs at 15:08 UTC, which is 8:38 PM IST
+    # Runs at 15:08 UTC, which is 8:38 PM IST (India Standard Time)
     - cron: '08 15 * * *'
   workflow_dispatch: # Allows manual running from the Actions tab
 
 jobs:
   update-scores:
+    # Ensure Write permissions are explicitly enabled for the GITHUB_TOKEN
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
+    
     steps:
-    - name: Check out repository (with write permission)
+    - name: Check out repository
       uses: actions/checkout@v3
-      # GITHUB_TOKEN को पास करें ताकि write permission मिल सके
+      # Pass the GITHUB_TOKEN to allow subsequent push operations
       with:
-        token: ${{ secrets.GITHUB_TOKEN }} 
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -27,8 +31,8 @@ jobs:
         pip install google-generativeai python-dateutil pytz
 
     - name: Run update script
-      # यह env: ब्लॉक GEMINI_API_KEY को python script के लिए उपलब्ध कराता है
       env:
+        # Passes the secret key to the Python script as an environment variable
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
@@ -36,14 +40,16 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
         git add data.json
         
-        # Pull करना ज़रूरी है, ताकि remote changes मिल सकें और rejected एरर ठीक हो।
-        git pull --rebase origin main 
+        # Git Rejection (fetch first) को हल करने के लिए, push से पहले pull करें
+        git pull --rebase origin main
         
-        # केवल तभी कमिट करें जब data.json में बदलाव हो
-        git diff --quiet && git diff --staged --quiet || git commit -m "📈 Aura Market Daily Update"
+        # हमेशा कमिट करें, भले ही सिर्फ timestamp ही बदला हो
+        # '|| true' यह सुनिश्चित करता है कि कमिट फ़ेल न हो अगर कोई बदलाव न हो
+        git commit -m "📈 Aura Market Daily Update: $(date +%Y-%m-%d %H:%M:%S)" || true
         
-        # FINAL SOLUTION: Push करने के लिए टोकन का उपयोग URL में करें (सबसे मज़बूत तरीका)
+        # GITHUB_TOKEN का उपयोग करके Push करें ताकि Permission Denied एरर न आए
         git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" main
 
