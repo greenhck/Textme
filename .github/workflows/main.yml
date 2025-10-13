@@ -1,0 +1,35 @@
+on:
+  schedule:
+    # Runs at 06:30 UTC, which is 12:00 PM IST
+    - cron: '30 6 * * *'
+  workflow_dispatch: # Allows manual running from the Actions tab
+
+jobs:
+  update-scores:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-generativeai python-dateutil pytz
+
+    - name: Run update script
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python update.py
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add data.json
+        git diff --quiet && git diff --staged --quiet || git commit -m "📈 Aura Market Daily Update"
+        git push
