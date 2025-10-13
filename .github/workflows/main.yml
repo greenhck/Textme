@@ -33,18 +33,20 @@ jobs:
       run: python update.py
 
     - name: Commit and push changes
+      env:
+        # Repository URL को आसान एक्सेस के लिए ENV में स्टोर करें
+        REPO_URL: https://github.com/${{ github.repository }}
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git add data.json
         
-        # 🚨 FINAL FIX: Push करने से पहले रिमोट में हुए किसी भी बदलाव को सिंक करें। 
-        # यह "rejected" एरर को हल करता है।
+        # Pull करना ज़रूरी है, भले ही यह पहले फेल हुआ हो, नए पुश से पहले।
         git pull --rebase origin main 
         
-        # केवल तभी कमिट करें जब data.json में बदलाव हो (यह देखने के लिए कि टाइमस्टैम्प बदला है या नहीं)
+        # केवल तभी कमिट करें जब data.json में बदलाव हो
         git diff --quiet && git diff --staged --quiet || git commit -m "📈 Aura Market Daily Update"
         
-        # Push करें
-        git push
+        # 🚨 FINAL SOLUTION: Push करने के लिए टोकन का उपयोग URL में करें (सबसे मज़बूत तरीका)
+        git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" main
 
