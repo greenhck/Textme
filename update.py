@@ -5,11 +5,11 @@ import pytz
 import google.generativeai as genai
 
 # Fetch API key from GitHub Secrets
-API_KEY = os.getenv('AIzaSyCzlxGc7IVAdIlpYyNulBgdfCESsFG2zd0')
+API_KEY = os.getenv('GEMINI_API_KEY')
 if not API_KEY:
     raise ValueError("GEMINI_API_KEY secret not found!")
 
-genai.configure(api_key=AIzaSyCzlxGc7IVAdIlpYyNulBgdfCESsFG2zd0)
+genai.configure(api_key=GEMINI_API_KEY)
 
 def get_bulk_aura_change_prompt(celebrity_names):
     """
