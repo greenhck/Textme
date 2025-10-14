@@ -17,7 +17,7 @@ jobs:
       # Use a specific version for stability
       uses: actions/checkout@v4 
       with:
-        # Pass the token for subsequent push operations
+        # CRITICAL: Pass the token for subsequent push operations
         token: ${{ secrets.GITHUB_TOKEN }} 
 
     - name: Set up Python
@@ -32,10 +32,11 @@ jobs:
 
     - name: Run update script
       env:
-        GEMINI_API_KEY: ${{ secrets.GITHUB_API_KEY }}
+        # Assuming you've updated the key in GitHub Secrets
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
       run: python update.py
 
-    # --- FINAL AND MOST RELIABLE GIT FIX ---
+    # --- FINAL AND MOST ROBUST GIT STASH FIX ---
     - name: Commit and push changes
       run: |
         # 1. Configure Git identity
@@ -48,23 +49,25 @@ jobs:
           exit 0 
         fi
         
-        # 3. FIX: Add the file FIRST to ensure Git knows about the change
+        # 3. FIX: Stash the local changes (data.json update) to clean the working tree
+        # This solves the "uncommitted changes" error during rebase.
         git add data.json
-        
-        # 4. FIX: Now the index is clean, but remote might have changes.
-        # Fetch and Rebase BEFORE Commit to put our changes on top.
-        # This order is CRITICAL for the 'uncommitted changes' error.
+        git stash push -m "Stash prior to rebase"
+
+        # 4. Fetch and Rebase: Pull remote changes on top of our stashed work
         git fetch origin
         git rebase origin/main
+
+        # 5. Restore the stashed changes (brings data.json back)
+        git stash pop
         
-        # 5. Commit the changes
+        # 6. Re-add and Commit
         COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
         COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
         
-        # NOTE: After rebase, we must re-add the file before committing
         git add data.json 
         git commit -m "${COMMIT_MSG}"
         
-        # 6. Push the changes
+        # 7. Push the changes
         git push origin main
         
