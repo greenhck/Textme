@@ -3,15 +3,15 @@ import json
 from datetime import datetime
 import pytz
 import google.generativeai as genai
-import re 
+import re # New import for robust JSON parsing
 
 # --- Configuration ---
-# Fetch API key from environment variable (GitHub Actions provides this)
+# Fetch API key from GitHub Secrets (stored in API_KEY Python variable)
 API_KEY = os.getenv('GEMINI_API_KEY')
 if not API_KEY:
-    # CRITICAL FIX: Ensure script fails hard if the key is missing from secrets
-    print("CRITICAL ERROR: GEMINI_API_KEY environment variable not found! Script cannot run.")
-    exit(1)
+    # Changed to a print statement for better GitHub Actions logging
+    print("WARNING: GEMINI_API_KEY secret not found! Exiting.")
+    exit()
 
 # Configure Gemini using the correctly defined Python variable API_KEY
 genai.configure(api_key=API_KEY)
@@ -39,7 +39,7 @@ def update_aura_scores():
     Fetches celebrity data, gets all aura changes in a single API call, and updates data.json.
     """
     data = {}
-    response = None 
+    response = None # Initialize response outside try block for wider access
     try:
         # 1. Read the existing data from the file
         with open('data.json', 'r') as f:
@@ -58,29 +58,28 @@ def update_aura_scores():
         model = genai.GenerativeModel(MODEL_NAME)
         prompt = get_bulk_aura_change_prompt(celebrity_names)
         
-        response = model.generate_content(prompt)
+        response = model.generate_content(prompt) # response is defined here
         
         # 3. Parse the JSON response from the API (ROBUST METHOD)
         response_text = response.text.strip()
         
+        # Use regex to find and extract the JSON object { ... }
+        # This handles cases where Gemini might wrap the JSON in markdown blocks (```json) or add comments.
         json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
         
         if json_match:
             cleaned_response_text = json_match.group(0).strip()
         else:
+            # Fallback (less robust)
             cleaned_response_text = response_text.replace('```json', '').replace('```', '').strip()
             
         aura_changes = json.loads(cleaned_response_text)
         print("Successfully received and parsed bulk aura changes.")
 
-        # CRITICAL FIX: Create a case-insensitive map for reliable key lookup
-        # This handles minor capitalization differences in Gemini's response
-        aura_changes_map = {k.lower(): v for k, v in aura_changes.items()}
-        
         # 4. Loop through celebrities and update their data
         for celeb in celebrities:
-            # Look up change using the lower-case name from data.json
-            aura_change = aura_changes_map.get(celeb['name'].lower(), 0.0) 
+            # Get the change from the parsed response. Default to 0.0 if a name is missing.
+            aura_change = aura_changes.get(celeb['name'], 0.0)
             
             # Update scores
             celeb['previous_aura_score'] = celeb['aura_score']
@@ -88,8 +87,9 @@ def update_aura_scores():
             
             # Update 7-day trend data
             trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
-            trend = trend[-6:] # Keep only the last 6 days
-            trend.append(celeb['aura_score']) # Add the new data point
+            # Ensure the trend list doesn't grow indefinitely (keeps 6 old + 1 new = 7)
+            trend = trend[-6:]
+            trend.append(celeb['aura_score'])
             celeb['trend_7_days'] = trend
 
         # 5. Update the timestamp to IST
@@ -103,6 +103,7 @@ def update_aura_scores():
         print("Aura Market data updated successfully using a single API call.")
 
     except json.JSONDecodeError as e:
+        # Now response is accessible here
         print(f"CRITICAL ERROR: Failed to parse JSON response from API. The response was:\n{getattr(response, 'text', 'No response text available')}\nError: {e}")
     except Exception as e:
         print(f"A critical error occurred: {e}")
