@@ -1,23 +1,47 @@
 {
-    "last_updated": "13-10-2025 12:00:00",
+    "last_updated": "14-10-2025 11:36:30 IST",
     "celebrities": [
         {
             "name": "Shah Rukh Khan",
             "aura_score": 1250.75,
-            "previous_aura_score": 1245.50,
-            "trend_7_days": [1210.00, 1215.25, 1230.50, 1225.00, 1240.75, 1245.50, 1250.75]
+            "previous_aura_score": 1250.75,
+            "trend_7_days": [
+                1215.25,
+                1230.5,
+                1225.0,
+                1240.75,
+                1245.5,
+                1250.75,
+                1250.75
+            ]
         },
         {
             "name": "Virat Kohli",
-            "aura_score": 1502.20,
-            "previous_aura_score": 1515.80,
-            "trend_7_days": [1480.10, 1495.60, 1505.30, 1525.00, 1520.40, 1515.80, 1502.20]
+            "aura_score": 1512.2,
+            "previous_aura_score": 1502.2,
+            "trend_7_days": [
+                1495.6,
+                1505.3,
+                1525.0,
+                1520.4,
+                1515.8,
+                1502.2,
+                1512.2
+            ]
         },
         {
             "name": "Alia Bhatt",
-            "aura_score": 985.45,
-            "previous_aura_score": 970.15,
-            "trend_7_days": [950.00, 955.25, 960.90, 958.40, 965.00, 970.15, 985.45]
+            "aura_score": 990.45,
+            "previous_aura_score": 985.45,
+            "trend_7_days": [
+                955.25,
+                960.9,
+                958.4,
+                965.0,
+                970.15,
+                985.45,
+                990.45
+            ]
         }
     ]
 }
