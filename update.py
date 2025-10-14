@@ -3,119 +3,110 @@ import json
 from datetime import datetime
 import pytz
 import google.generativeai as genai
-import re 
+import re # New import for robust JSON parsing
 
 # --- Configuration ---
+# Fetch API key from GitHub Secrets (stored in API_KEY Python variable)
 API_KEY = os.getenv('GEMINI_API_KEY')
 if not API_KEY:
-    print("CRITICAL ERROR: GEMINI_API_KEY environment variable not found! Script cannot run.")
-    exit(1)
+    # Changed to a print statement for better GitHub Actions logging
+    print("WARNING: GEMINI_API_KEY secret not found! Exiting.")
+    exit()
 
+# Configure Gemini using the correctly defined Python variable API_KEY
 genai.configure(api_key=API_KEY)
-MODEL_NAME = 'gemini-2.5-flash-lite' 
+MODEL_NAME = 'gemini-2.5-flash-lite'
 
 def get_bulk_aura_change_prompt(celebrity_names):
-    """Generates the prompt for the Gemini API."""
+    """
+    Generates a single, powerful prompt to get data for all celebrities at once.
+    """
     names_string = ", ".join(celebrity_names)
+    
     return (f"Analyze all significant positive and negative news, professional activities, "
             f"social media sentiment, and public statements for the following celebrities "
             f"over the last 24 hours: {names_string}. "
             f"Based on the overall real-world impact for EACH celebrity, generate a single numerical "
-            f"value representing the change in their 'Aura Score'. For example: a major movie hit could be +25, "
-            f"a major public controversy could be -20. "
+            f"value representing the change in their 'Aura Score'. For example: a major movie hit could be according to investment and movie profit, "
+            f"a major public controversy could be according to who is right in their contoroversy, a minor brand deal +5, a small gaffe -3. "
             f"Provide the output as a single, valid JSON object where the keys are the celebrity names "
             f"(exactly as provided) and the values are their calculated numerical aura change. "
-            f"The output MUST BE ONLY THE JSON OBJECT and nothing else.")
+            f"The output MUST BE ONLY THE JSON OBJECT and nothing else. "
+            f"Example format: {{\"Shah Rukh Khan\": 15.5, \"Virat Kohli\": -20.0, ...}}")
 
 def update_aura_scores():
-    """Fetches data, processes scores, and writes to data.json."""
+    """
+    Fetches celebrity data, gets all aura changes in a single API call, and updates data.json.
+    """
     data = {}
-    response = None 
-    ist = pytz.timezone('Asia/Kolkata')
-    
-    # 1. Read existing data
+    response = None # Initialize response outside try block for wider access
     try:
+        # 1. Read the existing data from the file
         with open('data.json', 'r') as f:
             data = json.load(f)
-        print("DEBUG: Successfully loaded data.json.")
-    except Exception as e:
-        print(f"ERROR: Failed to read data.json: {e}")
-        # If read fails, we can't proceed with celebrity logic
-        data['celebrities'] = []
+            
+        celebrities = data.get('celebrities', [])
+        
+        celebrity_names = [celeb['name'] for celeb in celebrities]
+        
+        if not celebrity_names:
+            print("No celebrities found in data.json. Exiting.")
+            return
 
-    celebrities = data.get('celebrities', [])
-    celebrity_names = [celeb['name'] for celeb in celebrities]
-
-    if not celebrity_names:
-        print("DEBUG: No celebrities found in data.json.")
-        # Even if list is empty, we update the timestamp before exiting
-        data['last_updated'] = datetime.now(ist).strftime('%d-%m-%Y %H:%M:%S IST')
-        write_data(data)
-        return
-
-    # 2. Make API Call and Process
-    try:
-        print(f"DEBUG: Making API call for {len(celebrity_names)} celebrities...")
+        # 2. Make ONE single API call for all celebrities
+        print(f"Making a single API call for {len(celebrity_names)} celebrities...")
         model = genai.GenerativeModel(MODEL_NAME)
         prompt = get_bulk_aura_change_prompt(celebrity_names)
         
-        response = model.generate_content(prompt)
+        response = model.generate_content(prompt) # response is defined here
+        
+        # 3. Parse the JSON response from the API (ROBUST METHOD)
         response_text = response.text.strip()
         
-        print(f"DEBUG: Raw API Response Received (First 100 chars): {response_text[:100]}...")
-
-        # Robust JSON Parsing
+        # Use regex to find and extract the JSON object { ... }
+        # This handles cases where Gemini might wrap the JSON in markdown blocks (```json) or add comments.
         json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
         
-        if not json_match:
-            # CRITICAL LOG: If API doesn't return JSON, we MUST see this in the log
-            raise json.JSONDecodeError("API response did not contain a valid JSON object.", response_text, 0)
+        if json_match:
+            cleaned_response_text = json_match.group(0).strip()
+        else:
+            # Fallback (less robust)
+            cleaned_response_text = response_text.replace('```json', '').replace('```', '').strip()
             
-        cleaned_response_text = json_match.group(0).strip()
         aura_changes = json.loads(cleaned_response_text)
-        print("DEBUG: Successfully parsed bulk aura changes.")
+        print("Successfully received and parsed bulk aura changes.")
 
-        # Case-insensitive map
-        aura_changes_map = {k.lower(): v for k, v in aura_changes.items()}
-        
-        # 3. Update scores
+        # 4. Loop through celebrities and update their data
         for celeb in celebrities:
-            aura_change = aura_changes_map.get(celeb['name'].lower(), 0.0) 
+            # Get the change from the parsed response. Default to 0.0 if a name is missing.
+            aura_change = aura_changes.get(celeb['name'], 0.0)
             
-            change_value = float(aura_change)
-            
+            # Update scores
             celeb['previous_aura_score'] = celeb['aura_score']
-            celeb['aura_score'] = round(celeb['aura_score'] + change_value, 2)
+            celeb['aura_score'] = round(celeb['aura_score'] + float(aura_change), 2)
             
-            # Update 7-day trend
+            # Update 7-day trend data
             trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
-            trend = trend[-6:] 
-            trend.append(celeb['aura_score']) 
+            # Ensure the trend list doesn't grow indefinitely (keeps 6 old + 1 new = 7)
+            trend = trend[-6:]
+            trend.append(celeb['aura_score'])
             celeb['trend_7_days'] = trend
-        
-        print("DEBUG: Scores updated in memory.")
 
-    except json.JSONDecodeError as e:
-        print(f"CRITICAL ERROR: Failed to parse JSON response from API. Response was: {getattr(response, 'text', 'No response text')}. Error: {e}")
-        # If API update fails, we still proceed to write the file with an updated timestamp.
-    except Exception as e:
-        print(f"CRITICAL ERROR: API or processing failed: {e}")
-        # If API update fails, we still proceed to write the file with an updated timestamp.
-    
-    # 4. CRITICAL FIX: Always update the timestamp and write the data
-    data['last_updated'] = datetime.now(ist).strftime('%d-%m-%Y %H:%M:%S IST')
-    write_data(data)
+        # 5. Update the timestamp to IST
+        ist = pytz.timezone('Asia/Kolkata')
+        data['last_updated'] = datetime.now(ist).strftime('%d-%m-%Y %H:%M:%S IST')
 
-def write_data(data):
-    """Helper function to write data to file."""
-    try:
+        # 6. Write back the updated data (using 'w' to guarantee overwrite)
         with open('data.json', 'w') as f:
             json.dump(data, f, indent=4)
-        print("DEBUG: Final data.json write successful.")
-    except Exception as e:
-        print(f"CRITICAL ERROR: Failed to write data.json: {e}")
+            
+        print("Aura Market data updated successfully using a single API call.")
 
+    except json.JSONDecodeError as e:
+        # Now response is accessible here
+        print(f"CRITICAL ERROR: Failed to parse JSON response from API. The response was:\n{getattr(response, 'text', 'No response text available')}\nError: {e}")
+    except Exception as e:
+        print(f"A critical error occurred: {e}")
 
 if __name__ == '__main__':
     update_aura_scores()
-
