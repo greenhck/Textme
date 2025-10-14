@@ -8,20 +8,20 @@ on:
 
 jobs:
   update-scores:
+    # Ensure Write permissions are explicitly enabled for the GITHUB_TOKEN
     permissions:
       contents: write
     runs-on: ubuntu-latest
     
     steps:
     - name: Check out repository
-      # Use a specific version for stability
-      uses: actions/checkout@v4 
+      uses: actions/checkout@v3
+      # Pass the GITHUB_TOKEN to allow subsequent push operations
       with:
-        # Pass the token for subsequent push operations
-        token: ${{ secrets.GITHUB_TOKEN }} 
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
@@ -32,34 +32,23 @@ jobs:
 
     - name: Run update script
       env:
+        # Passes the secret key to the Python script as an environment variable
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: python update.py
+      run: python **update.py** # <--- FILE NAME KEPT AS update.py
 
-    # --- FINAL AND MOST ROBUST COMMIT AND PUSH FIX ---
     - name: Commit and push changes
       run: |
-        # 1. Configure Git identity
-        git config user.name 'github-actions[bot]'
-        git config user.email 'github-actions[bot]@users.noreply.github.com'
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # Check if data.json actually changed 
-        if git diff --exit-code data.json > /dev/null; then
-          echo "No changes in data.json. Skipping commit and push."
-          exit 0 # Exit successfully if no changes
-        fi
-        
-        # 2. FIX: Use ISO format date with no spaces to prevent 'extra operand' error
-        COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-        COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
-        
-        # Add and Commit
         git add data.json
-        git commit -m "${COMMIT_MSG}"
         
-        # 3. FIX: Fetch and Rebase BEFORE Push (Standard solution for 'fetch first' error)
-        # This explicitly ensures local changes are on top of remote changes.
-        git fetch origin
-        git rebase origin/main
+        # Git Rejection (fetch first) को हल करने के लिए, push से पहले pull करें
+        git pull --rebase origin main
         
-        # 4. Push the changes
-        git push origin main
+        # हमेशा कमिट करें, भले ही सिर्फ timestamp ही बदला हो
+        # '|| true' यह सुनिश्चित करता है कि कमिट फ़ेल न हो अगर कोई बदलाव न हो
+        git commit -m "📈 Aura Market Daily Update: $(date +%Y-%m-%d %H:%M:%S)" || true
+        
+        # GITHUB_TOKEN का उपयोग करके Push करें ताकि Permission Denied एरर न आए
+        git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@[github.com/$](https://github.com/$){{ github.repository }}" main
