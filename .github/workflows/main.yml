@@ -8,16 +8,15 @@ on:
 
 jobs:
   update-scores:
-    # CRITICAL: Ensure Write permissions are explicitly enabled for the GITHUB_TOKEN
     permissions:
       contents: write
     runs-on: ubuntu-latest
     
     steps:
     - name: Check out repository
-      uses: actions/checkout@v4 # Updated to a newer version for better security and stability
+      uses: actions/checkout@v4 # Recommended version
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }} # Important for pushing changes
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -31,28 +30,31 @@ jobs:
 
     - name: Run update script
       env:
-        # Passes the secret key to the Python script as an environment variable
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
-    # --- SIMPLIFIED COMMIT AND PUSH SECTION (The main fix) ---
+    # --- FINAL AND RELIABLE COMMIT AND PUSH SECTION ---
     - name: Commit and push changes
       run: |
-        # Configure Git identity for the commit
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        # 1. Configure Git identity
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # Check if data.json actually changed (optional but good practice)
+        # Check if data.json actually changed 
         if git diff --exit-code data.json > /dev/null; then
           echo "No changes in data.json. Skipping commit."
         else
           # Add the changed file
           git add data.json
           
-          # Commit the changes
-          git commit -m "📈 Aura Market Daily Update: $(date +%Y-%m-%d %H:%M:%S)"
+          # 2. FIX: Use the correct date format for the commit message
+          COMMIT_MSG="📈 Aura Market Daily Update: $(date '+%Y-%m-%d %H:%M:%S')"
+          git commit -m "${COMMIT_MSG}"
           
-          # Push using the standard GITHUB_TOKEN method
+          # 3. FIX: Always PULL/REBASE before PUSH to handle remote changes/rejections
+          git pull --rebase origin main
+          
+          # 4. Push the changes
           git push
         fi
         
