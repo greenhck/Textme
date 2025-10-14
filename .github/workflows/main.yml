@@ -2,26 +2,26 @@ name: Aura Market Daily Update
 
 on:
   schedule:
-    # Runs at 15:08 UTC, which is 8:38 PM IST (India Standard Time)
+    # Runs at 06:54 UTC, which is 12:24 PM IST (India Standard Time)
     - cron: '54 06 * * *'
   workflow_dispatch: # Allows manual running from the Actions tab
 
 jobs:
   update-scores:
-    # Ensure Write permissions are explicitly enabled for the GITHUB_TOKEN
     permissions:
       contents: write
     runs-on: ubuntu-latest
     
     steps:
     - name: Check out repository
-      uses: actions/checkout@v3
-      # Pass the GITHUB_TOKEN to allow subsequent push operations
+      # Use a specific version for stability
+      uses: actions/checkout@v4 
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        # Pass the token for subsequent push operations
+        token: ${{ secrets.GITHUB_TOKEN }} 
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
@@ -32,23 +32,36 @@ jobs:
 
     - name: Run update script
       env:
-        # Passes the secret key to the Python script as an environment variable
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
+    # --- FINAL AND MOST ROBUST COMMIT AND PUSH FIX ---
     - name: Commit and push changes
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        # 1. Configure Git identity
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
         
+        # Check if data.json actually changed 
+        if git diff --exit-code data.json > /dev/null; then
+          echo "No changes in data.json. Skipping commit and push."
+          exit 0 
+        fi
+        
+        # 2. FIX: Use ISO format date with no spaces to prevent 'extra operand' error
+        # This fixes the date error in the commit message.
+        COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+        COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
+        
+        # Add and Commit
         git add data.json
+        git commit -m "${COMMIT_MSG}"
         
-        # Git Rejection (fetch first) को हल करने के लिए, push से पहले pull करें
-        git pull --rebase origin main
+        # 3. FIX: Fetch and Rebase BEFORE Push (Solution for 'fetch first' error)
+        # This is the essential part to fix the rejection error.
+        git fetch origin
+        git rebase origin/main
         
-        # हमेशा कमिट करें, भले ही सिर्फ timestamp ही बदला हो
-        # '|| true' यह सुनिश्चित करता है कि कमिट फ़ेल न हो अगर कोई बदलाव न हो
-        git commit -m "📈 Aura Market Daily Update: $(date +%Y-%m-%d %H:%M:%S)" || true
+        # 4. Push the changes
+        git push origin main
         
-        # GITHUB_TOKEN का उपयोग करके Push करें ताकि Permission Denied एरर न आए
-        git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" main
