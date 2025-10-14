@@ -18,7 +18,6 @@ jobs:
       uses: actions/checkout@v4 
       with:
         # Pass the token for subsequent push operations
-        # This is CRITICAL for permissions and handling remote changes.
         token: ${{ secrets.GITHUB_TOKEN }} 
 
     - name: Set up Python
@@ -33,32 +32,39 @@ jobs:
 
     - name: Run update script
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GITHUB_API_KEY }}
       run: python update.py
 
-    # --- FINAL AND CORRECT COMMIT AND PUSH FIX ---
+    # --- FINAL AND MOST RELIABLE GIT FIX ---
     - name: Commit and push changes
       run: |
         # 1. Configure Git identity
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # Check if data.json actually changed 
+        # 2. Check if data.json actually changed 
         if git diff --exit-code data.json > /dev/null; then
           echo "No changes in data.json. Skipping commit and push."
           exit 0 
         fi
         
-        # 2. FIX: Use ISO format date for a reliable commit message
+        # 3. FIX: Add the file FIRST to ensure Git knows about the change
+        git add data.json
+        
+        # 4. FIX: Now the index is clean, but remote might have changes.
+        # Fetch and Rebase BEFORE Commit to put our changes on top.
+        # This order is CRITICAL for the 'uncommitted changes' error.
+        git fetch origin
+        git rebase origin/main
+        
+        # 5. Commit the changes
         COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
         COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
         
-        # Add and Commit
-        git add data.json
-        # NOTE: The commit is now clean and doesn't conflict with pull/rebase.
+        # NOTE: After rebase, we must re-add the file before committing
+        git add data.json 
         git commit -m "${COMMIT_MSG}"
         
-        # 3. FIX: Use the PUSH action pattern which is designed to handle rejections
-        # This is the standard, reliable fix when manual pull/rebase fails.
-        git pull --rebase # Attempt to pull/rebase again (now that commit is done)
+        # 6. Push the changes
         git push origin main
+        
