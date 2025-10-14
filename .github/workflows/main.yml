@@ -32,11 +32,10 @@ jobs:
 
     - name: Run update script
       env:
-        # Assuming you've updated the key in GitHub Secrets
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
       run: python update.py
 
-    # --- FINAL AND MOST ROBUST GIT STASH FIX ---
+    # --- FINAL AND MOST ROBUST GIT PUSH FIX (Using Merge) ---
     - name: Commit and push changes
       run: |
         # 1. Configure Git identity
@@ -49,25 +48,21 @@ jobs:
           exit 0 
         fi
         
-        # 3. FIX: Stash the local changes (data.json update) to clean the working tree
-        # This solves the "uncommitted changes" error during rebase.
-        git add data.json
-        git stash push -m "Stash prior to rebase"
-
-        # 4. Fetch and Rebase: Pull remote changes on top of our stashed work
-        git fetch origin
-        git rebase origin/main
-
-        # 5. Restore the stashed changes (brings data.json back)
-        git stash pop
+        # 3. FIX: Stage all changes first
+        git add .
         
-        # 6. Re-add and Commit
+        # 4. Commit the changes locally
         COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
         COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
         
-        git add data.json 
-        git commit -m "${COMMIT_MSG}"
+        # FIX: The '|| true' ensures the action proceeds even if 'git add' failed for some reason
+        git commit -m "${COMMIT_MSG}" || true 
         
-        # 7. Push the changes
+        # 5. FIX: Pull (Merge) before Push. This handles the 'fetch first' rejection.
+        # We use simple 'git pull' which performs a merge, avoiding rebase complexity.
+        git pull origin main
+
+        # 6. Final Push
+        # If the pull created a merge commit, this final push will succeed.
         git push origin main
         
