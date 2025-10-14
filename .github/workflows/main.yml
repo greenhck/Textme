@@ -1,2 +1,59 @@
-# Removed this complex line:
-# git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" main
+name: Aura Market Daily Update
+
+on:
+  schedule:
+    # Runs at 06:54 UTC, which is 12:24 PM IST (India Standard Time)
+    - cron: '54 06 * * *'
+  workflow_dispatch: # Allows manual running from the Actions tab
+
+jobs:
+  update-scores:
+    # CRITICAL: Ensure Write permissions are explicitly enabled for the GITHUB_TOKEN
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4 # Updated to a newer version for better security and stability
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install google-generativeai python-dateutil pytz
+
+    - name: Run update script
+      env:
+        # Passes the secret key to the Python script as an environment variable
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python update.py
+
+    # --- SIMPLIFIED COMMIT AND PUSH SECTION (The main fix) ---
+    - name: Commit and push changes
+      run: |
+        # Configure Git identity for the commit
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        
+        # Check if data.json actually changed (optional but good practice)
+        if git diff --exit-code data.json > /dev/null; then
+          echo "No changes in data.json. Skipping commit."
+        else
+          # Add the changed file
+          git add data.json
+          
+          # Commit the changes
+          git commit -m "📈 Aura Market Daily Update: $(date +%Y-%m-%d %H:%M:%S)"
+          
+          # Push using the standard GITHUB_TOKEN method
+          git push
+        fi
+        
+# --- END OF FILE ---
