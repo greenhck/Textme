@@ -48,21 +48,26 @@ jobs:
           exit 0 
         fi
         
-        # 3. FIX: Stage all changes first
+        # 3. Stage all changes (make sure Git sees the updated file)
         git add .
         
         # 4. Commit the changes locally
         COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
         COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
         
-        # FIX: The '|| true' ensures the action proceeds even if 'git add' failed for some reason
-        git commit -m "${COMMIT_MSG}" || true 
+        # Commit the changes
+        git commit -m "${COMMIT_MSG}"
         
-        # 5. FIX: Pull (Merge) before Push. This handles the 'fetch first' rejection.
-        # We use simple 'git pull' which performs a merge, avoiding rebase complexity.
-        git pull origin main
+        # 5. FIX: Pull (Merge) before Push. This handles the 'fetch first' rejection reliably.
+        # We use simple 'git pull' which performs a merge, avoiding rebase complexity and conflicts.
+        git pull origin main --ff-only
+        
+        # If the --ff-only fails (meaning remote has new commits), try a standard merge
+        if [ $? -ne 0 ]; then
+            echo "Fast-forward failed, attempting standard pull/merge."
+            git pull origin main
+        fi
 
         # 6. Final Push
-        # If the pull created a merge commit, this final push will succeed.
         git push origin main
         
