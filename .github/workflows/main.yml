@@ -35,34 +35,31 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
-    # --- FINAL AND MOST RELIABLE COMMIT AND PUSH FIX ---
+    # --- FINAL AND MOST ROBUST COMMIT AND PUSH FIX ---
     - name: Commit and push changes
-      id: commit
       run: |
-        # Configure Git identity
+        # 1. Configure Git identity
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # Check if data.json actually changed (ensures clean commit history)
+        # Check if data.json actually changed 
         if git diff --exit-code data.json > /dev/null; then
           echo "No changes in data.json. Skipping commit and push."
           exit 0 # Exit successfully if no changes
         fi
         
-        # 1. FIX: Use standard shell date format without complex nesting
-        COMMIT_MSG="📈 Aura Market Daily Update: $(date +%Y-%m-%d\ %H:%M:%S)"
+        # 2. FIX: Use ISO format date with no spaces to prevent 'extra operand' error
+        COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+        COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
         
         # Add and Commit
         git add data.json
         git commit -m "${COMMIT_MSG}"
         
-        # 2. FIX: PULL and PUSH logic combined for rejections
-        # This is the most critical fix for rejected pushes.
-        # Use simple git push, which leverages the token set up by checkout@v4
+        # 3. FIX: Fetch and Rebase BEFORE Push (Standard solution for 'fetch first' error)
+        # This explicitly ensures local changes are on top of remote changes.
+        git fetch origin
+        git rebase origin/main
+        
+        # 4. Push the changes
         git push origin main
-        
-        # NOTE: If git push fails due to rejection, the action will fail and the log will be available.
-        echo "Push attempt completed."
-      shell: bash # Ensure we use bash, which handles the date format better
-        
-# --- END OF FILE ---
