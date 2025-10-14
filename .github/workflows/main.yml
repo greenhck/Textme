@@ -2,9 +2,8 @@ name: Aura Market Daily Update
 
 on:
   schedule:
-    # Runs at 06:54 UTC, which is 12:24 PM IST (India Standard Time)
-    - cron: '54 06 * * *'
-  workflow_dispatch: # Allows manual trigger from Actions tab
+    - cron: '54 06 * * *' # Runs at 06:54 UTC (12:24 PM IST)
+  workflow_dispatch:
 
 jobs:
   update-scores:
@@ -40,7 +39,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # Clean working directory (safety)
+          # Clean up working directory to avoid "cannot rebase" errors
           git reset --hard
           git clean -fd
 
@@ -50,13 +49,11 @@ jobs:
             exit 0
           fi
 
-          # Prepare commit message with UTC timestamp
+          # Create commit message
           COMMIT_MSG="📈 Aura Market Daily Update: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
 
           git add data.json
           git commit -m "${COMMIT_MSG}"
-
-          # Push changes
           git push origin main
-          
-          echo "✅ Changes pushed successfully."
+
+          echo "✅ Data updated and pushed successfully."
