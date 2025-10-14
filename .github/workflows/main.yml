@@ -2,7 +2,7 @@ name: Aura Market Daily Update
 
 on:
   schedule:
-    # Runs at 06:54 UTC, which is 12:24 PM IST (India Standard Time)
+    # Runs at 15:08 UTC, which is 8:38 PM IST (India Standard Time)
     - cron: '54 06 * * *'
   workflow_dispatch: # Allows manual running from the Actions tab
 
@@ -34,7 +34,7 @@ jobs:
       env:
         # Passes the secret key to the Python script as an environment variable
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: python **update.py** # <--- FILE NAME KEPT AS update.py
+      run: python update.py
 
     - name: Commit and push changes
       run: |
@@ -51,4 +51,4 @@ jobs:
         git commit -m "📈 Aura Market Daily Update: $(date +%Y-%m-%d %H:%M:%S)" || true
         
         # GITHUB_TOKEN का उपयोग करके Push करें ताकि Permission Denied एरर न आए
-        git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@[github.com/$](https://github.com/$){{ github.repository }}" main
+        git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" main
