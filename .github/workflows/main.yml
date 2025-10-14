@@ -2,7 +2,7 @@ name: Aura Market Daily Update
 
 on:
   schedule:
-    - cron: '54 06 * * *' # Runs at 06:54 UTC (12:24 PM IST)
+    - cron: '54 06 * * *' # Runs daily at 06:54 UTC (12:24 PM IST)
   workflow_dispatch:
 
 jobs:
@@ -39,21 +39,20 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-          # Clean up working directory to avoid "cannot rebase" errors
+          # Clean working directory to avoid rebase/pull errors
           git reset --hard
           git clean -fd
 
-          # Check if data.json actually changed
+          # Check if data.json changed
           if git diff --exit-code data.json > /dev/null; then
-            echo "No changes detected in data.json — skipping commit."
+            echo "No changes detected — skipping commit."
             exit 0
           fi
 
-          # Create commit message
+          # Commit and push
           COMMIT_MSG="📈 Aura Market Daily Update: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-
           git add data.json
           git commit -m "${COMMIT_MSG}"
           git push origin main
 
-          echo "✅ Data updated and pushed successfully."
+          echo "✅ Update committed and pushed successfully."
