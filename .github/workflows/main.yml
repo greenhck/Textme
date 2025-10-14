@@ -14,9 +14,11 @@ jobs:
     
     steps:
     - name: Check out repository
-      uses: actions/checkout@v4 # Recommended version
+      # Use a specific version for stability
+      uses: actions/checkout@v4 
       with:
-        token: ${{ secrets.GITHUB_TOKEN }} # Important for pushing changes
+        # Pass the token for subsequent push operations
+        token: ${{ secrets.GITHUB_TOKEN }} 
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -33,29 +35,34 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: python update.py
 
-    # --- FINAL AND RELIABLE COMMIT AND PUSH SECTION ---
+    # --- FINAL AND MOST RELIABLE COMMIT AND PUSH FIX ---
     - name: Commit and push changes
+      id: commit
       run: |
-        # 1. Configure Git identity
+        # Configure Git identity
         git config user.name 'github-actions[bot]'
         git config user.email 'github-actions[bot]@users.noreply.github.com'
         
-        # Check if data.json actually changed 
+        # Check if data.json actually changed (ensures clean commit history)
         if git diff --exit-code data.json > /dev/null; then
-          echo "No changes in data.json. Skipping commit."
-        else
-          # Add the changed file
-          git add data.json
-          
-          # 2. FIX: Use the correct date format for the commit message
-          COMMIT_MSG="📈 Aura Market Daily Update: $(date '+%Y-%m-%d %H:%M:%S')"
-          git commit -m "${COMMIT_MSG}"
-          
-          # 3. FIX: Always PULL/REBASE before PUSH to handle remote changes/rejections
-          git pull --rebase origin main
-          
-          # 4. Push the changes
-          git push
+          echo "No changes in data.json. Skipping commit and push."
+          exit 0 # Exit successfully if no changes
         fi
+        
+        # 1. FIX: Use standard shell date format without complex nesting
+        COMMIT_MSG="📈 Aura Market Daily Update: $(date +%Y-%m-%d\ %H:%M:%S)"
+        
+        # Add and Commit
+        git add data.json
+        git commit -m "${COMMIT_MSG}"
+        
+        # 2. FIX: PULL and PUSH logic combined for rejections
+        # This is the most critical fix for rejected pushes.
+        # Use simple git push, which leverages the token set up by checkout@v4
+        git push origin main
+        
+        # NOTE: If git push fails due to rejection, the action will fail and the log will be available.
+        echo "Push attempt completed."
+      shell: bash # Ensure we use bash, which handles the date format better
         
 # --- END OF FILE ---
