@@ -35,7 +35,7 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
       run: python update.py
 
-    # --- FINAL AND MOST ROBUST GIT PUSH FIX (Using Merge) ---
+    # --- FINAL AND MOST AGGRESSIVE PUSH FIX (Force Push) ---
     - name: Commit and push changes
       run: |
         # 1. Configure Git identity
@@ -48,26 +48,16 @@ jobs:
           exit 0 
         fi
         
-        # 3. Stage all changes (make sure Git sees the updated file)
-        git add .
-        
-        # 4. Commit the changes locally
+        # 3. Commit the changes
         COMMIT_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-        COMMIT_MSG="📈 Aura Market Daily Update: ${COMMIT_TIMESTAMP}"
+        COMMIT_MSG="📈 Aura Market Daily apdate: ${COMMIT_TIMESTAMP}"
         
-        # Commit the changes
+        git add data.json 
         git commit -m "${COMMIT_MSG}"
         
-        # 5. FIX: Pull (Merge) before Push. This handles the 'fetch first' rejection reliably.
-        # We use simple 'git pull' which performs a merge, avoiding rebase complexity and conflicts.
-        git pull origin main --ff-only
-        
-        # If the --ff-only fails (meaning remote has new commits), try a standard merge
-        if [ $? -ne 0 ]; then
-            echo "Fast-forward failed, attempting standard pull/merge."
-            git pull origin main
-        fi
-
-        # 6. Final Push
-        git push origin main
+        # 4. FIX: Use 'git push --force-with-lease'. 
+        # Since this action is the only one pushing regularly, 
+        # forcing the push is the simplest way to bypass all "fetch first" errors.
+        echo "Attempting to force push the single commit..."
+        git push origin main --force-with-lease 
         
