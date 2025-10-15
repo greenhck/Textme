@@ -10,18 +10,21 @@ from google.genai.errors import APIError, ResourceExhaustedError, InternalError
 API_KEY = os.getenv('GEMINI_API_KEY')
 if not API_KEY:
     print("WARNING: GEMINI_API_KEY secret not found! Exiting.")
-    exit(1) # Exit with error code 1
+    exit(1) # Error कोड 1 के साथ बाहर निकलें
 
 # Client Configuration
 try:
+    # API Key के साथ क्लाइंट को कॉन्फ़िगर करें
     genai.configure(api_key=API_KEY)
 except Exception as e:
+    # यदि कॉन्फ़िगरेशन विफल होता है (दुर्लभ, लेकिन सुरक्षित)
     print(f"❌ Initialization Error: Could not configure Gemini client. Details: {e}")
     exit(1)
     
 MODEL_NAME = 'gemini-2.5-flash-lite'
 
 def get_bulk_aura_change_prompt(celebrity_names):
+    """दिए गए सेलिब्रिटी नामों के लिए बल्क Aura Score चेंज प्रॉम्प्ट जनरेट करता है।"""
     names_string = ", ".join(celebrity_names)
     return (f"Analyze all significant positive and negative news, professional activities, "
             f"social media sentiment, and public statements for the following celebrities "
@@ -58,6 +61,7 @@ def update_aura_scores():
         
         # JSON Enforcement
         try:
+            # **मॉडल से सामग्री जनरेट करने के लिए मुख्य कॉल**
             response = model.generate_content(
                 prompt,
                 config=genai.types.GenerateContentConfig(
@@ -65,21 +69,27 @@ def update_aura_scores():
                 )
             )
         
-        # Google-specific exceptions को पकड़ें (Authentication, Network, Rate Limiting)
+        # 1. Google-specific exceptions को पकड़ें (Authentication, Network, Rate Limiting)
         except (APIError, ResourceExhaustedError, InternalError) as e:
-            print(f"\n🚨 CRITICAL API ERROR DETECTED!")
-            print(f"This is likely a **Network, Authentication (Invalid/Blocked Key), or Rate Limit** issue.")
+            print(f"\n🚨 CRITICAL GOOGLE API ERROR DETECTED!")
+            print(f"यह **नेटवर्क, ऑथेंटिकेशन (अवैध/ब्लॉक की गई Key), या रेट लिमिट** समस्या हो सकती है।")
             print(f"Error Type: {type(e).__name__}")
             print(f"Error Details: {e}")
-            # यहाँ हम स्क्रिप्ट को विफल कर देंगे क्योंकि API कॉल नहीं हो पाई।
-            exit(1)
+            exit(1) # GitHub Action को तुरंत विफल करने के लिए
         
+        # 2. किसी भी अन्य I/O या कनेक्शन अपवाद को पकड़ें जो ऊपर छूट गया हो
+        except Exception as e:
+            print(f"\n❌ UNHANDLED CONNECTION ERROR DETECTED!")
+            print(f"स्क्रिप्ट API कॉल के दौरान विफल हुई (model.generate_content)। यह निम्न-स्तरीय नेटवर्क या सिस्टम विफलता का संकेत देता है।")
+            print(f"Error Details: {e}")
+            exit(1)
+            
         # --- ROBUST API CALL BLOCK END ---
 
         # 3. Check for empty or blocked response
         if not response.text or not response.candidates[0].content.parts[0].text:
              response_text = "ERROR: Empty response received from Gemini API. Check for Safety/Policy block."
-             raise ValueError(response_text) # Force an error for better logging
+             raise ValueError(response_text) # बेहतर लॉगिंग के लिए एक त्रुटि जबरदस्ती करें
 
         response_text = response.text.strip()
         aura_changes = json.loads(response_text) 
@@ -88,6 +98,7 @@ def update_aura_scores():
 
         # 4. Loop through celebrities and update their data (Score logic remains same)
         for celeb in celebrities:
+            # Aura score में बदलाव प्राप्त करें, यदि नहीं मिला तो डिफ़ॉल्ट 0.0
             aura_change = aura_changes.get(celeb['name'], 0.0)
             
             try:
@@ -99,12 +110,13 @@ def update_aura_scores():
             celeb['previous_aura_score'] = celeb['aura_score']
             celeb['aura_score'] = round(celeb['aura_score'] + change_value, 2)
             
+            # Trend 7_days को अपडेट करें
             trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
             trend = trend[-6:] 
             trend.append(celeb['aura_score'])
             celeb['trend_7_days'] = trend
 
-        # 5. Update the timestamp to IST
+        # 5. Update the timestamp to IST (Asia/Kolkata)
         ist = pytz.timezone('Asia/Kolkata')
         data['last_updated'] = datetime.now(ist).strftime('%d-%m-%Y %H:%M:%S IST')
 
@@ -115,13 +127,13 @@ def update_aura_scores():
         print("Aura Market data updated successfully.")
 
     except (json.JSONDecodeError, ValueError) as e:
-        # JSONDecodeError/ValueError अब केवल तब आएगा जब API कॉल सफल हो लेकिन response JSON न हो
+        # JSONDecodeError/ValueError अब तभी आएगा जब API कॉल सफल हो लेकिन response JSON न हो
         print(f"CRITICAL ERROR: Failed to process API response (JSON/Data Error). Raw response:\n---START RAW RESPONSE---\n{response_text}\n---END RAW RESPONSE---\nError: {e}")
-        exit(1) # Ensure the action fails visibly
+        exit(1)
     except Exception as e:
         # यह किसी भी अन्य अप्रत्याशित त्रुटि को पकड़ेगा (जैसे फ़ाइल ओपन एरर)
         print(f"A critical error occurred (File/Logic Error): {e}")
-        exit(1) # Ensure the action fails visibly
+        exit(1)
 
 if __name__ == '__main__':
     update_aura_scores()
