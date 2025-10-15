@@ -2,10 +2,9 @@ import os
 import json
 from datetime import datetime
 import pytz
-# NEW SDK: google.genai का उपयोग करें
 from google import genai
-# FIX: QuotaError या ResourceExhaustedError को हटा दें, वे APIError के अंतर्गत आएंगे
-from google.genai.errors import APIError, InternalError
+# FIX: Only import the core APIError class, which catches almost all service errors.
+from google.genai.errors import APIError
 
 # --- Configuration ---
 API_KEY = os.getenv('GEMINI_API_KEY')
@@ -15,17 +14,18 @@ if not API_KEY:
 
 # Client Initialization
 try:
-    # Client Initialization Key को Environment Variable से स्वतः उठाएगा
+    # Client Initialization Key is automatically picked up from the Environment Variable
     client = genai.Client()
     print("✅ Gemini API Client initialized.")
 except Exception as e:
+    # Catches issues with the API key format or initial connection setup.
     print(f"❌ Initialization Error: Could not initialize Gemini client. Details: {e}")
     exit(1)
     
 MODEL_NAME = 'gemini-2.5-flash-lite'
 
 def get_bulk_aura_change_prompt(celebrity_names):
-    """दिए गए सेलिब्रिटी नामों के लिए बल्क Aura Score चेंज प्रॉम्प्ट जनरेट करता है।"""
+    """Generates the bulk Aura Score change prompt for the given celebrity names."""
     names_string = ", ".join(celebrity_names)
     return (f"Analyze all significant positive and negative news, professional activities, "
             f"social media sentiment, and public statements for the following celebrities "
@@ -68,14 +68,15 @@ def update_aura_scores():
                 )
             )
         
-        # 1. Google-specific exceptions को पकड़ें (APIError में Authentication/Quota/Invalid Request शामिल है)
-        except (APIError, InternalError) as e:
+        # 1. Catch all specific Google API exceptions (Authentication, Quota, Internal, etc.)
+        except APIError as e:
             print(f"\n🚨 CRITICAL GOOGLE API ERROR DETECTED (Handled API Error)!")
             print(f"Error Type: {type(e).__name__}")
             print(f"Error Details: {e}")
+            # This is where we'd see the AuthenticationError or QuotaError details
             exit(1)
         
-        # 2. सामान्य अपवाद को पकड़ें (Low-level Network/System Error)
+        # 2. Catch generic exceptions (Low-level network failure, connection loss)
         except Exception as e:
             print(f"\n❌ CRITICAL UNHANDLED CONNECTION/SYSTEM ERROR DETECTED!")
             print(f"Error Type: {type(e).__name__}")
@@ -123,9 +124,11 @@ def update_aura_scores():
         print("Aura Market data updated successfully.")
 
     except (json.JSONDecodeError, ValueError) as e:
+        # This catches errors if the API response is not valid JSON
         print(f"CRITICAL ERROR: Failed to process API response (JSON/Data Error). Raw response:\n---START RAW RESPONSE---\n{response_text}\n---END RAW RESPONSE---\nError: {e}")
         exit(1)
     except Exception as e:
+        # Catches file read/write errors or logic errors
         print(f"A critical error occurred (File/Logic Error): {e}")
         exit(1)
 
