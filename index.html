@@ -75,7 +75,6 @@
     <!-- Header: Sticky and Professional (Full Width - Sharp Edges) -->
     <header class="sticky top-0 z-10 bg-[--color-bg-surface] shadow-xl border-b border-gray-700">
         <!-- Inner Header Content (Keeping small horizontal padding for logo/text spacing) -->
-        <!-- Reduced horizontal padding from px-4 to px-3 -->
         <div class="w-full px-3 py-4 sm:px-5 lg:px-7 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <!-- Logo Icon -->
@@ -102,21 +101,29 @@
         <!-- 1. Top Movers Summary Cards (Vertical on mobile, horizontal on sm+) -->
         <!-- Reduced external vertical space (mb-2, pt-2) and horizontal padding (px-2, sm:px-4, lg:px-6). Reduced gap (gap-3) -->
         <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2 px-2 sm:px-4 lg:px-6 pt-2">
-            <!-- Highest Growth Card (Internal padding maintained for readability) -->
-            <div id="top-mover-card" class="bg-gray-800 p-4 shadow-lg border border-gray-700 rounded-xl">
+            
+            <!-- Highest Growth Card - Reduced internal p-4 to p-3, h2 text-2xl to text-xl, and data text-xl to text-lg -->
+            <div id="top-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl">
                 <p class="text-sm font-medium text-gray-400">📈 Highest Daily Growth</p>
-                <h2 class="text-2xl font-bold mt-1 text-white truncate" id="top-mover-name">Loading...</h2>
-                <div id="top-mover-data" class="flex items-center mt-2">
-                    <span id="top-mover-movement" class="text-xl font-bold text-gray-400">--</span>
+                <!-- Reduced text size to xl and margin to mt-0.5 -->
+                <h2 class="text-xl font-bold mt-0.5 text-white truncate" id="top-mover-name">Loading...</h2>
+                <!-- Reduced margin to mt-1 -->
+                <div id="top-mover-data" class="flex items-center mt-1">
+                    <!-- Reduced text size to lg -->
+                    <span id="top-mover-movement" class="text-lg font-bold text-gray-400">--</span>
                     <span id="top-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
-            <!-- Lowest Growth Card (Internal padding maintained for readability) -->
-            <div id="bottom-mover-card" class="bg-gray-800 p-4 shadow-lg border border-gray-700 rounded-xl">
+            
+            <!-- Lowest Growth Card - Reduced internal p-4 to p-3, h2 text-2xl to text-xl, and data text-xl to text-lg -->
+            <div id="bottom-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl">
                 <p class="text-sm font-medium text-gray-400">📉 Lowest Daily Growth</p>
-                <h2 class="text-2xl font-bold mt-1 text-white truncate" id="bottom-mover-name">Loading...</h2>
-                <div id="bottom-mover-data" class="flex items-center mt-2">
-                    <span id="bottom-mover-movement" class="text-xl font-bold text-gray-400">--</span>
+                <!-- Reduced text size to xl and margin to mt-0.5 -->
+                <h2 class="text-xl font-bold mt-0.5 text-white truncate" id="bottom-mover-name">Loading...</h2>
+                 <!-- Reduced margin to mt-1 -->
+                <div id="bottom-mover-data" class="flex items-center mt-1">
+                     <!-- Reduced text size to lg -->
+                    <span id="bottom-mover-movement" class="text-lg font-bold text-gray-400">--</span>
                     <span id="bottom-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
@@ -161,7 +168,7 @@
         <div class="bg-[--color-bg-surface] shadow-2xl overflow-x-auto flex-grow"> 
             <table class="min-w-full divide-y divide-gray-700">
                 
-                <!-- Table Header: Reduced py-3.5 to py-3 -->
+                <!-- Table Header: py-3 -->
                 <thead class="bg-gray-800 sticky top-[68px]"> 
                     <tr>
                         <th scope="col" class="py-3 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6">
@@ -256,7 +263,7 @@
                 movers.forEach(m => {
                     document.getElementById(`${m}-mover-name`).textContent = 'Loading...';
                     const dataEl = document.getElementById(`${m}-mover-data`);
-                    dataEl.innerHTML = `<span class="text-xl font-bold text-gray-400">--</span><span class="ml-3 text-sm font-medium text-gray-400"> (--)</span>`;
+                    dataEl.innerHTML = `<span class="text-lg font-bold text-gray-400">--</span><span class="ml-3 text-sm font-medium text-gray-400"> (--)</span>`;
                 });
                 return;
             }
@@ -273,7 +280,7 @@
 
                 document.getElementById('top-mover-name').textContent = topMover.name;
                 document.getElementById('top-mover-data').innerHTML = `
-                    <span id="top-mover-movement" class="${topMoverMovement.class} text-xl font-bold">${topMoverMovement.text}</span>
+                    <span id="top-mover-movement" class="${topMoverMovement.class} text-lg font-bold">${topMoverMovement.text}</span>
                     <span id="top-mover-percent" class="ml-3 text-sm font-medium ${topMoverPercent.class}"> (${topMoverPercent.text}%)</span>
                 `;
 
@@ -286,7 +293,7 @@
 
                 document.getElementById('bottom-mover-name').textContent = bottomMover.name;
                 document.getElementById('bottom-mover-data').innerHTML = `
-                    <span id="bottom-mover-movement" class="${bottomMovementClass} text-xl font-bold">${bottomMoverMovement.text}</span>
+                    <span id="bottom-mover-movement" class="${bottomMovementClass} text-lg font-bold">${bottomMoverMovement.text}</span>
                     <span id="bottom-mover-percent" class="ml-3 text-sm font-medium ${bottomMovementClass}"> (${bottomMoverPercent.text}%)</span>
                 `;
             } else {
@@ -397,8 +404,8 @@
          */
         function renderTable(dataToRender) {
             if (dataToRender.length === 0 && document.getElementById('search-input').value.length > 0) {
-                // Show 'No results found' if search term is active. Reduced padding here for consistency (px-4 py-3).
-                tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-sm text-gray-500">कोई परिणाम नहीं मिला।</td></tr>`;
+                // FIX: Increased vertical padding (py-12) and slightly larger, bolder text to prevent table collapse
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-12 text-center text-lg text-gray-500 font-semibold">कोई परिणाम नहीं मिला।</td></tr>`;
                 return;
             } else if (dataToRender.length === 0) {
                  // Show general error if data array is empty but no search term (should be covered by fetchData error)
@@ -413,31 +420,26 @@
                 return `
                     <tr class="hover:bg-gray-800 transition duration-150 ease-in-out">
                         <!-- Column 1: Name -->
-                        <!-- Reduced vertical padding from py-4 to py-3 -->
                         <td class="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
                             ${celeb.name}
                         </td>
                         
                         <!-- Column 2: Aura Score (Current Score) -->
-                        <!-- Reduced vertical padding from py-4 to py-3 -->
                         <td class="numeric px-3 py-3 text-sm text-white">
                             ${celeb.aura_score.toFixed(2)}
                         </td>
                         
                         <!-- Column 3: Previous Day's AS -->
-                        <!-- Reduced vertical padding from py-4 to py-3 -->
                         <td class="hidden sm:table-cell numeric px-3 py-3 text-sm text-[--color-text-secondary]">
                             ${celeb.previous_aura_score.toFixed(2)}
                         </td>
                         
                         <!-- Column 4: Net Movement (Today's Change) -->
-                        <!-- Reduced vertical padding from py-4 to py-3 -->
                         <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${movementText}
                         </td>
                         
                         <!-- Column 5: Daily % Chg -->
-                        <!-- Reduced vertical padding from py-4 to py-3 -->
                         <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${percentText}%
                         </td>
