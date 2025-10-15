@@ -3,6 +3,8 @@ import json
 from datetime import datetime
 import pytz
 import google.generativeai as genai
+# Google API Errors को इंपोर्ट करें ताकि हम उन्हें स्पष्ट रूप से पकड़ सकें
+from google.genai.errors import APIError, ResourceExhaustedError, InternalError
 
 # --- Configuration ---
 API_KEY = os.getenv('GEMINI_API_KEY')
@@ -10,7 +12,13 @@ if not API_KEY:
     print("WARNING: GEMINI_API_KEY secret not found! Exiting.")
     exit(1) # Exit with error code 1
 
-genai.configure(api_key=API_KEY)
+# Client Configuration
+try:
+    genai.configure(api_key=API_KEY)
+except Exception as e:
+    print(f"❌ Initialization Error: Could not configure Gemini client. Details: {e}")
+    exit(1)
+    
 MODEL_NAME = 'gemini-2.5-flash-lite'
 
 def get_bulk_aura_change_prompt(celebrity_names):
@@ -26,6 +34,7 @@ def get_bulk_aura_change_prompt(celebrity_names):
 
 def update_aura_scores():
     data = {}
+    # 'response_text' को API विफल होने की स्थिति में डिफ़ॉल्ट त्रुटि संदेश के साथ प्रारंभ करें।
     response_text = "ERROR: Raw response text not captured before API call."
     
     try:
@@ -40,19 +49,33 @@ def update_aura_scores():
             print("No celebrities found in data.json. Exiting.")
             return
 
-        # 2. Make ONE single API call, enforcing JSON output
+        # 2. Setup for API call
         print(f"Making a single API call for {len(celebrity_names)} celebrities...")
         model = genai.GenerativeModel(MODEL_NAME)
         prompt = get_bulk_aura_change_prompt(celebrity_names)
         
-        # JSON Enforcement
-        response = model.generate_content(
-            prompt,
-            config=genai.types.GenerateContentConfig(
-                response_mime_type="application/json"
-            )
-        )
+        # --- ROBUST API CALL BLOCK START ---
         
+        # JSON Enforcement
+        try:
+            response = model.generate_content(
+                prompt,
+                config=genai.types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+        
+        # Google-specific exceptions को पकड़ें (Authentication, Network, Rate Limiting)
+        except (APIError, ResourceExhaustedError, InternalError) as e:
+            print(f"\n🚨 CRITICAL API ERROR DETECTED!")
+            print(f"This is likely a **Network, Authentication (Invalid/Blocked Key), or Rate Limit** issue.")
+            print(f"Error Type: {type(e).__name__}")
+            print(f"Error Details: {e}")
+            # यहाँ हम स्क्रिप्ट को विफल कर देंगे क्योंकि API कॉल नहीं हो पाई।
+            exit(1)
+        
+        # --- ROBUST API CALL BLOCK END ---
+
         # 3. Check for empty or blocked response
         if not response.text or not response.candidates[0].content.parts[0].text:
              response_text = "ERROR: Empty response received from Gemini API. Check for Safety/Policy block."
@@ -92,10 +115,12 @@ def update_aura_scores():
         print("Aura Market data updated successfully.")
 
     except (json.JSONDecodeError, ValueError) as e:
-        print(f"CRITICAL ERROR: Failed to process API response. Raw response:\n---START RAW RESPONSE---\n{response_text}\n---END RAW RESPONSE---\nError: {e}")
+        # JSONDecodeError/ValueError अब केवल तब आएगा जब API कॉल सफल हो लेकिन response JSON न हो
+        print(f"CRITICAL ERROR: Failed to process API response (JSON/Data Error). Raw response:\n---START RAW RESPONSE---\n{response_text}\n---END RAW RESPONSE---\nError: {e}")
         exit(1) # Ensure the action fails visibly
     except Exception as e:
-        print(f"A critical error occurred: {e}")
+        # यह किसी भी अन्य अप्रत्याशित त्रुटि को पकड़ेगा (जैसे फ़ाइल ओपन एरर)
+        print(f"A critical error occurred (File/Logic Error): {e}")
         exit(1) # Ensure the action fails visibly
 
 if __name__ == '__main__':
