@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flux - Aura Market</title>
-    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom Tailwind Configuration (using Inter font and a professional dark palette) */
@@ -43,22 +42,26 @@
         .animate-spin-slow {
             animation: spin 1s linear infinite;
         }
+
+        /* NEW: Fix for sticky header */
+        .sticky-header-offset {
+            /* Header height: 68px (h-16 in py-4 with default sizes is about 64px, added border/shadow padding) */
+            top: 68px;
+        }
     </style>
 </head>
-<!-- Added flex and min-h-screen for full height layout (flush bottom) -->
 <body class="antialiased flex flex-col min-h-screen"> 
 
-    <!-- Help Modal (Internal Component - Rounded Corners Reintroduced) -->
     <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gray-800 shadow-2xl max-w-lg w-full p-6 border border-gray-700 rounded-lg">
             <div class="flex justify-between items-center pb-3 border-b border-gray-700">
-                <h3 class="text-xl font-bold text-white">ऑरा स्कोर (AS) गणना और जानकारी</h3>
+                <h3 class="text-xl font-bold text-white">ऑरा स्कोर गणना और जानकारी</h3>
                 <button onclick="toggleHelpModal(false)" class="text-gray-400 hover:text-white transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6L18 18"/></svg>
                 </button>
             </div>
             <p class="mt-4 text-gray-300">
-                **ऑरा स्कोर (AS)** एक इंडेक्स है जो किसी भी व्यक्ति की सार्वजनिक प्रतिष्ठा और प्रभाव को दर्शाता है।
+                **ऑरा स्कोर** (AS) एक इंडेक्स है जो किसी भी व्यक्ति की सार्वजनिक प्रतिष्ठा और प्रभाव को दर्शाता है।
             </p>
             <p class="mt-2 text-sm text-gray-400">
                 यह स्कोर पिछले 24 घंटों में निम्नलिखित कारकों को जोड़कर गणना किया जाता है:
@@ -72,12 +75,9 @@
         </div>
     </div>
 
-    <!-- Header: Sticky and Professional (Full Width - Sharp Edges) -->
-    <header class="sticky top-0 z-10 bg-[--color-bg-surface] shadow-xl border-b border-gray-700">
-        <!-- Inner Header Content (Keeping small horizontal padding for logo/text spacing) -->
+    <header id="main-header" class="sticky top-0 z-20 bg-[--color-bg-surface] shadow-xl border-b border-gray-700">
         <div class="w-full px-3 py-4 sm:px-5 lg:px-7 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <!-- Logo Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2v-7.5"/><path d="M17.5 7.5L20 5 22.5 7.5"/><path d="M17.5 10.5L20 13 22.5 10.5"/><path d="M19 14.5L20 12l1-2.5"/></svg>
                 <h1 class="text-2xl font-bold tracking-tight text-white">Flux - Aura Market</h1>
             </div>
@@ -86,56 +86,39 @@
                     <span class="text-[--color-text-secondary]">Last Indexed:</span> 
                     <span id="update-time" class="font-medium text-white">--:-- IST</span>
                 </div>
-                <!-- Help Icon Button -->
                 <button onclick="toggleHelpModal(true)" class="p-2 hover:bg-gray-700 transition rounded-full" title="Aura Score गणना कैसे होती है">
-                    <!-- Adjusted position of icon relative to button padding -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container: Added flex-grow and flex-col for flush bottom layout -->
-    <main class="w-full flex-grow flex flex-col"> 
+    <main class="w-full flex-grow flex flex-col p-2 sm:p-4 lg:p-6 pt-0"> 
         
-        <!-- 1. Top Movers Summary Cards (Vertical on mobile, horizontal on sm+) -->
-        <!-- Reduced external vertical space (mb-2, pt-2) and horizontal padding (px-2, sm:px-4, lg:px-6). Reduced gap (gap-3) -->
-        <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2 px-2 sm:px-4 lg:px-6 pt-2">
+        <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2 -mx-2 sm:-mx-4 lg:-mx-6">
             
-            <!-- Highest Growth Card - Reduced internal p-4 to p-3, h2 text-2xl to text-xl, and data text-xl to text-lg -->
-            <div id="top-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl">
+            <div id="top-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl mx-2 sm:mx-4 lg:mx-6">
                 <p class="text-sm font-medium text-gray-400">📈 Highest Daily Growth</p>
-                <!-- Reduced text size to xl and margin to mt-0.5 -->
                 <h2 class="text-xl font-bold mt-0.5 text-white truncate" id="top-mover-name">Loading...</h2>
-                <!-- Reduced margin to mt-1 -->
                 <div id="top-mover-data" class="flex items-center mt-1">
-                    <!-- Reduced text size to lg -->
                     <span id="top-mover-movement" class="text-lg font-bold text-gray-400">--</span>
                     <span id="top-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
             
-            <!-- Lowest Growth Card - Reduced internal p-4 to p-3, h2 text-2xl to text-xl, and data text-xl to text-lg -->
-            <div id="bottom-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl">
+            <div id="bottom-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl mx-2 sm:mx-4 lg:mx-6">
                 <p class="text-sm font-medium text-gray-400">📉 Lowest Daily Growth</p>
-                <!-- Reduced text size to xl and margin to mt-0.5 -->
                 <h2 class="text-xl font-bold mt-0.5 text-white truncate" id="bottom-mover-name">Loading...</h2>
-                 <!-- Reduced margin to mt-1 -->
                 <div id="bottom-mover-data" class="flex items-center mt-1">
-                     <!-- Reduced text size to lg -->
                     <span id="bottom-mover-movement" class="text-lg font-bold text-gray-400">--</span>
                     <span id="bottom-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Controls Bar -->
-        <!-- Reduced padding (p-3) and horizontal padding (px-2, sm:px-4, lg:px-6) -->
-        <div class="bg-[--color-bg-surface] p-3 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-3 border-b border-gray-700 px-2 sm:px-4 lg:px-6">
-            <!-- Search Input -->
+        <div class="bg-[--color-bg-surface] flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-3 border-b border-gray-700 py-3">
             <div class="relative w-full sm:w-80">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <!-- Search Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21L16.65 16.65"/></svg>
                 </div>
                 <input 
@@ -146,15 +129,13 @@
                     class="w-full bg-gray-700 text-white border pl-10 pr-10 py-2.5 border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg"
                 >
                 <div id="loading-spinner" class="absolute inset-y-0 right-0 hidden flex items-center pr-3">
-                    <!-- Rotating Loading Animation Icon (used for search/sort) -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
                 </div>
             </div>
 
-            <!-- Sort Dropdown -->
             <div class="flex items-center space-x-2 w-full sm:w-auto">
                 <label for="sort-select" class="text-gray-400 text-sm whitespace-nowrap hidden sm:block">Sort By:</label>
-                <select id="sort-select" onchange="handleSearchAndSort()" class="bg-gray-700 text-white py-2.5 px-3 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg">
+                <select id="sort-select" onchange="handleSearchAndSort()" class="bg-gray-700 text-white py-2.5 px-3 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg w-full sm:w-auto">
                     <option value="score_desc">Aura Score (High to Low)</option>
                     <option value="score_asc">Aura Score (Low to High)</option>
                     <option value="change_desc">Daily Growth (High to Low)</option>
@@ -164,21 +145,19 @@
             </div>
         </div>
 
-        <!-- 3. Main Data Table: Added flex-grow to ensure it takes up remaining space and extends to the bottom -->
-        <div class="bg-[--color-bg-surface] shadow-2xl overflow-x-auto flex-grow"> 
+        <div class="bg-[--color-bg-primary] overflow-x-auto flex-grow"> 
             <table class="min-w-full divide-y divide-gray-700">
                 
-                <!-- Table Header: py-3 -->
-                <thead class="bg-gray-800 sticky top-[68px]"> 
+                <thead class="bg-gray-800 sticky sticky-header-offset z-10"> 
                     <tr>
-                        <th scope="col" class="py-3 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6">
+                        <th scope="col" class="py-3 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6 w-full">
                             Name
                         </th>
                         <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
-                            Aura Score (AS)
+                            Aura Score
                         </th>
                         <th scope="col" class="hidden sm:table-cell px-3 py-3 text-right text-sm font-semibold text-gray-400">
-                            Previous Day's Score
+                            Previous Score
                         </th>
                         <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
                             Net Movement
@@ -189,15 +168,14 @@
                     </tr>
                 </thead>
                 
-                <!-- Table Body -->
                 <tbody id="aura-data" class="divide-y divide-gray-800">
-                    <!-- Initial loading state managed by JS -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </main>
 
     <script>
+        // ... (The JavaScript code remains the same, except for the new CSS class 'sticky-header-offset' used above) ...
         document.addEventListener('DOMContentLoaded', fetchData);
 
         let rawAuraData = []; // Stores the fetched data
@@ -426,7 +404,7 @@
          */
         function renderTable(dataToRender) {
             if (dataToRender.length === 0 && document.getElementById('search-input').value.length > 0) {
-                // FIX: Increased vertical padding (py-16) and text size (text-xl) for better prominence
+                // Not Found Message
                 tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-16 text-center text-xl text-gray-500 font-semibold">कोई परिणाम नहीं मिला।</td></tr>`;
                 return;
             } else if (dataToRender.length === 0) {
@@ -441,27 +419,22 @@
 
                 return `
                     <tr class="hover:bg-gray-800 transition duration-150 ease-in-out">
-                        <!-- Column 1: Name (Left Aligned) -->
                         <td class="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
                             ${celeb.name}
                         </td>
                         
-                        <!-- Column 2: Aura Score (Right Aligned) -->
                         <td class="numeric px-3 py-3 text-sm text-white">
                             ${celeb.aura_score.toFixed(2)}
                         </td>
                         
-                        <!-- Column 3: Previous Day's AS (Right Aligned) -->
                         <td class="hidden sm:table-cell numeric px-3 py-3 text-sm text-[--color-text-secondary]">
                             ${celeb.previous_aura_score.toFixed(2)}
                         </td>
                         
-                        <!-- Column 4: Net Movement (Right Aligned) -->
                         <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${movementText}
                         </td>
                         
-                        <!-- Column 5: Daily % Chg (Right Aligned) -->
                         <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${percentText}%
                         </td>
