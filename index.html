@@ -263,7 +263,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile Responsive Shortcuts: Hides 'Today's Change' column (now 3rd) */
+        /* Mobile Responsive Shortcuts: Now showing all 4 columns */
         @media (max-width: 600px) {
             body {
                 font-size: 13px;
@@ -274,11 +274,10 @@
             .aura-table th, .aura-table td {
                 padding: 10px 3px;
             }
-            /* Hides the 'Today's Change' (3rd) column on small screens */
-            .aura-table th:nth-child(3), 
-            .aura-table td:nth-child(3) {
-                display: none;
-            }
+            
+            /* REMOVED: The rule that hid the 'Today's Change' (3rd) column. 
+               It will now show by default. */
+               
             .icon-group {
                 gap: 10px;
             }
@@ -286,12 +285,14 @@
                 font-size: 0.75em;
             }
             .aura-table th.name-header, .aura-table td.name-cell {
-                width: 35%;
+                width: 35%; /* Keep Name slightly wider for better readability */
             }
-            /* Remaining 2 columns (2nd, 4th) */
+            /* Remaining 3 columns (2nd, 3rd, 4th) are now visible. 
+               We redistribute the remaining 65% width equally among them (21.66% each). */
             .aura-table th:nth-child(2), 
+            .aura-table th:nth-child(3),
             .aura-table th:nth-child(4) { 
-                width: 32.5%; /* (100% - 35%) / 2 = 32.5% each */
+                width: 21.66%; 
             }
         }
     </style>
@@ -532,4 +533,3 @@
     </script>
 </body>
 </html>
-
