@@ -5,7 +5,7 @@ import pytz
 # NEW SDK: google.genai का उपयोग करें
 from google import genai
 # FIX: 'ResourceExhaustedError' को 'QuotaError' से बदलें
-from google.genai.errors import APIError, QuotaError, InternalError
+from google.genai.errors import APIError, ResourceExhaustedError, InternalError
 
 # --- Configuration ---
 API_KEY = os.getenv('GEMINI_API_KEY')
