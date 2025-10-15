@@ -23,21 +23,18 @@ jobs:
           python-version: '3.10'
 
       - name: 📦 Install Python Dependencies 
-        # Correcting package installation for the 'google.genai' import.
+        # FIX: Installing the 'google-generativeai' package, which provides the module 
+        # your update.py script is importing (`import google.generativeai`).
         run: |
           python -m pip install --upgrade pip
-          # Installing the 'google-genai' SDK (which provides 'google.genai' module)
-          # and 'pytz' for time zone handling.
-          pip install google-genai pytz
+          pip install google-generativeai pytz
 
       - name: 🏃 Run Update Script
-        # This step correctly passes the API Key from the GitHub Secret.
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python update.py
 
       # --- Commit and Push Changes ---
-      # This action is correct for committing the updated data.json file.
       - name: Commit and push changes using auto-commit action 🔄
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
