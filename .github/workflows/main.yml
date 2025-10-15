@@ -22,25 +22,26 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: 📦 Install Python Dependencies 
+        # Correcting package installation for the 'google.genai' import.
         run: |
           python -m pip install --upgrade pip
-          pip install google-generativeai python-dateutil pytz
+          # Installing the 'google-genai' SDK (which provides 'google.genai' module)
+          # and 'pytz' for time zone handling.
+          pip install google-genai pytz
 
-      - name: Run update script
+      - name: 🏃 Run Update Script
+        # This step correctly passes the API Key from the GitHub Secret.
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python update.py
 
-      # --- पुराना Git स्टेप हटाया गया (Removed old Git step) ---
-      
+      # --- Commit and Push Changes ---
+      # This action is correct for committing the updated data.json file.
       - name: Commit and push changes using auto-commit action 🔄
-        uses: stefanzweifel/git-auto-commit-action@v5 # <<< यह नया एक्शन है
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # हम सिर्फ़ data.json फ़ाइल को कमिट करना चाहते हैं
           file_pattern: 'data.json'
-          # कमिट मैसेज (Commit Message)
           commit_message: "📈 Aura Market Daily Update: ${{ github.run_id }}"
-          # बॉट डिटेल्स (Bot Details)
           commit_user_name: 'github-actions[bot]'
           commit_user_email: 'github-actions[bot]@users.noreply.github.com'
