@@ -36,7 +36,7 @@
             font-variant-numeric: tabular-nums; /* Align decimals */
         }
         
-        /* Animation for loading spinner */
+        /* Animation for main loading spinner (for search/table) */
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -47,26 +47,33 @@
 </head>
 <body class="antialiased">
 
-    <!-- Help Modal (Hidden by default) -->
+    <!-- Help Modal (Internal Component - Rounded Corners Reintroduced) -->
     <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-gray-800 rounded-lg shadow-2xl max-w-lg w-full p-6 border border-gray-700">
+        <div class="bg-gray-800 shadow-2xl max-w-lg w-full p-6 border border-gray-700 rounded-lg"> <!-- rounded-lg वापस जोड़ा गया -->
             <div class="flex justify-between items-center pb-3 border-b border-gray-700">
-                <h3 class="text-xl font-bold text-white">ऑरा स्कोर की गणना कैसे होती है?</h3>
+                <h3 class="text-xl font-bold text-white">ऑरा स्कोर (AS) गणना और जानकारी</h3>
                 <button onclick="toggleHelpModal(false)" class="text-gray-400 hover:text-white transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6L18 18"/></svg>
                 </button>
             </div>
             <p class="mt-4 text-gray-300">
-                ऑरा स्कोर (Aura Score) एक **AI-संचालित इंडेक्स** है। यह स्कोर प्रत्येक सेलिब्रिटी या इकाई की सार्वजनिक प्रतिष्ठा और प्रभाव को दर्शाता है।
+                **ऑरा स्कोर (AS)** एक इंडेक्स है जो किसी भी व्यक्ति की सार्वजनिक प्रतिष्ठा और प्रभाव को दर्शाता है।
             </p>
             <p class="mt-2 text-sm text-gray-400">
-                हमारा सिस्टम (`update.py` स्क्रिप्ट के माध्यम से Gemini API का उपयोग करके) पिछले 24 घंटों में मीडिया कवरेज, सोशल मीडिया सेंटीमेंट, प्रमुख घोषणाओं और सार्वजनिक प्रतिक्रियाओं का विश्लेषण करता है। यह स्कोर 0 से 2000 के बीच होता है, जहां उच्च स्कोर मजबूत सकारात्मक प्रभाव और प्रतिष्ठा को दर्शाता है।
+                यह स्कोर पिछले 24 घंटों में निम्नलिखित कारकों को जोड़कर गणना किया जाता है:
+                <ul class="list-disc list-inside ml-4 mt-2">
+                    <li>मीडिया कवरेज की मात्रा और गुणवत्ता।</li>
+                    <li>सोशल मीडिया पर जन भावना (Sentiment) और चर्चा।</li>
+                    <li>प्रमुख घोषणाओं और सार्वजनिक प्रतिक्रियाओं का प्रभाव।</li>
+                </ul>
+                यह स्कोर 0 से 2000 के बीच होता है, जहां **उच्च स्कोर** मजबूत सकारात्मक प्रभाव को दर्शाता है।
             </p>
         </div>
     </div>
 
-    <!-- Header: Sticky and Professional (Full Width) -->
+    <!-- Header: Sticky and Professional (Full Width - Sharp Edges) -->
     <header class="sticky top-0 z-10 bg-[--color-bg-surface] shadow-xl border-b border-gray-700">
+        <!-- Inner Header Content (Keeping small horizontal padding for logo/text spacing) -->
         <div class="w-full px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2v-7.5"/><path d="M17.5 7.5L20 5 22.5 7.5"/><path d="M17.5 10.5L20 13 22.5 10.5"/><path d="M19 14.5L20 12l1-2.5"/></svg>
@@ -78,41 +85,41 @@
                     <span id="update-time" class="font-medium text-white">--:-- IST</span>
                 </div>
                 <!-- Help Icon Button -->
-                <button onclick="toggleHelpModal(true)" class="p-2 rounded-full hover:bg-gray-700 transition" title="Aura Score गणना कैसे होती है">
+                <button onclick="toggleHelpModal(true)" class="p-2 hover:bg-gray-700 transition" title="Aura Score गणना कैसे होती है"> <!-- Rounded not needed on this button -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container (Full Width) -->
-    <main class="w-full px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Main Content Container (Full Width - Sharp Edges) -->
+    <main class="w-full">
         
-        <!-- 1. Top Movers Summary Cards -->
-        <div id="movers-summary" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- 1. Top Movers Summary Cards (Internal Components - Rounded Corners Reintroduced) -->
+        <div id="movers-summary" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 px-4 sm:px-6 lg:px-8 pt-8">
             <!-- Highest Growth Card -->
-            <div id="top-mover-card" class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+            <div id="top-mover-card" class="bg-gray-800 p-6 shadow-lg border border-gray-700 rounded-xl"> <!-- rounded-xl वापस जोड़ा गया -->
                 <p class="text-sm font-medium text-gray-400">📈 Highest Daily Growth</p>
-                <h2 class="text-2xl font-bold mt-1 text-white truncate" id="top-mover-name">-- Loading --</h2>
-                <div class="flex items-center mt-2">
-                    <span id="top-mover-movement" class="text-xl font-bold text-green-400">0.00</span>
-                    <span id="top-mover-percent" class="ml-3 text-sm font-medium text-green-400"> (0.00%)</span>
+                <h2 class="text-2xl font-bold mt-1 text-white truncate" id="top-mover-name">Loading...</h2>
+                <div id="top-mover-data" class="flex items-center mt-2">
+                    <span id="top-mover-movement" class="text-xl font-bold text-gray-400">--</span>
+                    <span id="top-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
             <!-- Lowest Growth Card -->
-            <div id="bottom-mover-card" class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+            <div id="bottom-mover-card" class="bg-gray-800 p-6 shadow-lg border border-gray-700 rounded-xl"> <!-- rounded-xl वापस जोड़ा गया -->
                 <p class="text-sm font-medium text-gray-400">📉 Lowest Daily Growth</p>
-                <h2 class="text-2xl font-bold mt-1 text-white truncate" id="bottom-mover-name">-- Loading --</h2>
-                <div class="flex items-center mt-2">
-                    <span id="bottom-mover-movement" class="text-xl font-bold text-red-400">0.00</span>
-                    <span id="bottom-mover-percent" class="ml-3 text-sm font-medium text-red-400"> (0.00%)</span>
+                <h2 class="text-2xl font-bold mt-1 text-white truncate" id="bottom-mover-name">Loading...</h2>
+                <div id="bottom-mover-data" class="flex items-center mt-2">
+                    <span id="bottom-mover-movement" class="text-xl font-bold text-gray-400">--</span>
+                    <span id="bottom-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Controls Bar (Search and Sort/Filter) -->
-        <div class="bg-[--color-bg-surface] p-4 rounded-t-xl flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 border-b border-gray-700">
-            <!-- Search Input -->
+        <!-- 2. Controls Bar (Full Width Container - Sharp Edges) -->
+        <div class="bg-[--color-bg-surface] p-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 border-b border-gray-700 px-4 sm:px-6 lg:px-8">
+            <!-- Search Input (Internal Component - Rounded Corners Reintroduced) -->
             <div class="relative w-full sm:w-80">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3">
                     <!-- Search Icon -->
@@ -121,9 +128,9 @@
                 <input 
                     type="text" 
                     id="search-input" 
-                    placeholder="Search Celebrity Name..." 
+                    placeholder="Search Name..." 
                     oninput="handleSearchAndSort()"
-                    class="w-full bg-gray-700 text-white rounded-lg pl-10 pr-10 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full bg-gray-700 text-white border pl-10 pr-10 py-2.5 border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg" <!-- rounded-lg वापस जोड़ा गया -->
                 >
                 <div id="loading-spinner" class="absolute inset-y-0 right-0 hidden flex items-center pr-3">
                     <!-- Rotating Loading Animation Icon (used for search/sort) -->
@@ -131,10 +138,10 @@
                 </div>
             </div>
 
-            <!-- Sort Dropdown -->
+            <!-- Sort Dropdown (Internal Component - Rounded Corners Reintroduced) -->
             <div class="flex items-center space-x-2 w-full sm:w-auto">
                 <label for="sort-select" class="text-gray-400 text-sm whitespace-nowrap hidden sm:block">Sort By:</label>
-                <select id="sort-select" onchange="handleSearchAndSort()" class="bg-gray-700 text-white rounded-lg py-2.5 px-3 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <select id="sort-select" onchange="handleSearchAndSort()" class="bg-gray-700 text-white py-2.5 px-3 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg"> <!-- rounded-lg वापस जोड़ा गया -->
                     <option value="score_desc">Aura Score (High to Low)</option>
                     <option value="score_asc">Aura Score (Low to High)</option>
                     <option value="change_desc">Daily Growth (High to Low)</option>
@@ -144,21 +151,21 @@
             </div>
         </div>
 
-        <!-- 3. Main Data Table -->
-        <div class="bg-[--color-bg-surface] shadow-2xl rounded-b-xl overflow-x-auto">
+        <!-- 3. Main Data Table (Full Width Container - Sharp Edges) -->
+        <div class="bg-[--color-bg-surface] shadow-2xl overflow-x-auto"> 
             <table class="min-w-full divide-y divide-gray-700">
                 
                 <!-- Table Header -->
-                <thead class="bg-gray-800 sticky top-[68px]"> <!-- Adjusted sticky position below the main header -->
+                <thead class="bg-gray-800 sticky top-[68px]"> 
                     <tr>
                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6">
-                            Celebrity
+                            Name
                         </th>
                         <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
-                            Aura Score (AS)
+                            Aura Score (<abbr title="Aura Score">AS</abbr>)
                         </th>
                         <th scope="col" class="hidden sm:table-cell px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
-                            Previous Day's AS
+                            Previous Day's <abbr title="Aura Score">AS</abbr>
                         </th>
                         <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
                             Net Movement
@@ -171,12 +178,7 @@
                 
                 <!-- Table Body -->
                 <tbody id="aura-data" class="divide-y divide-gray-800">
-                    <!-- Loading Spinner instead of text for initial load -->
-                    <tr>
-                        <td colspan="5" class="px-6 py-8 text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400 animate-spin-slow mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
-                        </td>
-                    </tr>
+                    <!-- Initial loading state managed by JS -->
                 </tbody>
             </table>
         </div>
@@ -187,16 +189,34 @@
 
         let rawAuraData = []; // Stores the fetched data
         const tableBody = document.getElementById('aura-data');
-        const loadingSpinner = document.getElementById('loading-spinner');
+        const searchSpinner = document.getElementById('loading-spinner');
+        const ERROR_TIMEOUT_MS = 9000; // 9 seconds
+
+        // --- HTML Templates ---
         
+        /** HTML string for the spinning loading circle for the main table */
+        const MAIN_TABLE_SPINNER_HTML = `
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400 animate-spin-slow mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+                </td>
+            </tr>
+        `;
+        
+        const MAIN_TABLE_ERROR_HTML = (message) => `
+            <tr>
+                <td colspan="5" class="px-6 py-4 text-center text-lg font-bold text-red-500">
+                    🚨 ERROR: ${message} 🚨
+                </td>
+            </tr>
+        `;
+
         // --- Helper Functions ---
 
-        /** Toggles the visibility of the help modal. */
         function toggleHelpModal(show) {
             document.getElementById('help-modal').style.display = show ? 'flex' : 'none';
         }
 
-        /** Formats the movement value and returns it with sign and appropriate color class. */
         function formatMovement(movement) {
             const isPositive = movement >= 0;
             const sign = isPositive ? '+' : '';
@@ -208,29 +228,90 @@
             };
         }
         
-        /** HTML string for the spinning loading circle */
-        const SPINNER_HTML = `
-            <tr>
-                <td colspan="5" class="px-6 py-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400 animate-spin-slow mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
-                </td>
-            </tr>
-        `;
+        /** Toggles the Mover Cards between Loading/Success/Error states. */
+        function updateMoverCardsState(state = 'loading', data = null) {
+            const updateTime = document.getElementById('update-time');
+            const movers = ['top', 'bottom'];
+
+            if (state === 'error') {
+                updateTime.textContent = '-- Error --';
+                movers.forEach(m => {
+                    const nameEl = document.getElementById(`${m}-mover-name`);
+                    const dataEl = document.getElementById(`${m}-mover-data`);
+                    
+                    nameEl.textContent = 'Error Loading Data';
+                    dataEl.innerHTML = `<span class="text-sm font-medium text-red-500">Could not fetch data.</span>`;
+                });
+                return;
+            }
+
+            if (state === 'loading') {
+                updateTime.textContent = '...Loading...';
+                movers.forEach(m => {
+                    document.getElementById(`${m}-mover-name`).textContent = 'Loading...';
+                    const dataEl = document.getElementById(`${m}-mover-data`);
+                    dataEl.innerHTML = `<span class="text-xl font-bold text-gray-400">--</span><span class="ml-3 text-sm font-medium text-gray-400"> (--)</span>`;
+                });
+                return;
+            }
+            
+            // State: success (data should not be null here)
+            if (data && data.length > 0) {
+                // Find Top/Bottom Movers based on Net Movement
+                const topMover = data.reduce((max, celeb) => celeb.netMovement > max.netMovement ? celeb : max, data[0]);
+                const bottomMover = data.reduce((min, celeb) => celeb.netMovement < min.netMovement ? celeb : min, data[0]);
+
+                // --- Top Mover Update ---
+                const topMoverMovement = formatMovement(topMover.netMovement);
+                const topMoverPercent = formatMovement(topMover.changePercentage);
+
+                document.getElementById('top-mover-name').textContent = topMover.name;
+                document.getElementById('top-mover-data').innerHTML = `
+                    <span id="top-mover-movement" class="${topMoverMovement.class} text-xl font-bold">${topMoverMovement.text}</span>
+                    <span id="top-mover-percent" class="ml-3 text-sm font-medium ${topMoverPercent.class}"> (${topMoverPercent.text}%)</span>
+                `;
+
+
+                // --- Bottom Mover Update ---
+                const bottomMoverMovement = formatMovement(bottomMover.netMovement);
+                const bottomMoverPercent = formatMovement(bottomMover.changePercentage);
+                const bottomMovementClass = bottomMoverMovement.isPositive ? 'text-yellow-400' : 'text-red-400';
+
+                document.getElementById('bottom-mover-name').textContent = bottomMover.name;
+                document.getElementById('bottom-mover-data').innerHTML = `
+                    <span id="bottom-mover-movement" class="${bottomMovementClass} text-xl font-bold">${bottomMoverMovement.text}</span>
+                    <span id="bottom-mover-percent" class="ml-3 text-sm font-medium ${bottomMovementClass}"> (${bottomMoverPercent.text}%)</span>
+                `;
+            } else {
+                 updateMoverCardsState('error');
+            }
+        }
 
         // --- Core Data Functions ---
 
         /**
-         * Fetches data from data.json and populates the rawAuraData array.
+         * Fetches data from data.json with a 9-second fail-safe.
          */
         async function fetchData() {
-            loadingSpinner.classList.remove('hidden');
-            // Show spinner in the main table
-            tableBody.innerHTML = SPINNER_HTML; 
+            updateMoverCardsState('loading');
+            tableBody.innerHTML = MAIN_TABLE_SPINNER_HTML; 
+
+            const errorTimeout = setTimeout(() => {
+                // If this timeout fires, the fetch is still running, meaning we display the error.
+                console.error('Data load exceeded 9 seconds timeout. Displaying error.');
+                tableBody.innerHTML = MAIN_TABLE_ERROR_HTML('Timeout: Could not load data.json within 9 seconds.');
+                updateMoverCardsState('error');
+            }, ERROR_TIMEOUT_MS);
 
             try {
                 const response = await fetch(`data.json?v=${new Date().getTime()}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 
+                clearTimeout(errorTimeout); // Clear timeout since data was successfully loaded
+
                 // 1. Process Raw Data
                 rawAuraData = data.celebrities.map(celeb => {
                     const netMovement = celeb.aura_score - celeb.previous_aura_score;
@@ -246,23 +327,22 @@
                 document.getElementById('update-time').textContent = data.last_updated;
 
                 // 3. Update Movers Cards
-                updateMoversCards(rawAuraData);
+                updateMoverCardsState('success', rawAuraData);
 
                 // 4. Render Table (Initial Sort by Score Desc)
                 handleSearchAndSort();
 
             } catch (error) {
+                clearTimeout(errorTimeout); // Clear timeout if fetch failed quickly
                 console.error('CRITICAL: Failed to load Flux - Aura Market data.', error);
-                // On error, show text message (not spinner)
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-sm text-red-500">
-                            Error loading data.json. Check file path and network connection.
-                        </td>
-                    </tr>
-                `;
+                
+                // Show spinner for a brief moment before showing final error (user preference)
+                setTimeout(() => {
+                    tableBody.innerHTML = MAIN_TABLE_ERROR_HTML(`Failed to load data. Details: ${error.message}`);
+                    updateMoverCardsState('error');
+                }, 100); 
             } finally {
-                loadingSpinner.classList.add('hidden');
+                // searchSpinner is only used by handleSearchAndSort now.
             }
         }
 
@@ -270,11 +350,13 @@
          * Filters and sorts the data based on user inputs and renders the table.
          */
         function handleSearchAndSort() {
-            loadingSpinner.classList.remove('hidden');
+            // Show search spinner briefly
+            searchSpinner.classList.remove('hidden');
 
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const sortCriteria = document.getElementById('sort-select').value;
 
+            // Use the globally stored rawAuraData for filtering
             let filteredData = rawAuraData.filter(celeb => 
                 celeb.name.toLowerCase().includes(searchTerm)
             );
@@ -297,11 +379,11 @@
             });
 
             // 2. Render the filtered and sorted data
-            renderTable(filteredData);
             
-            // Simulating a small delay for the animation to be visible
+            // Use setTimeout to allow the search spinner animation to be visible
             setTimeout(() => {
-                 loadingSpinner.classList.add('hidden');
+                 renderTable(filteredData);
+                 searchSpinner.classList.add('hidden');
             }, 100);
         }
 
@@ -309,9 +391,14 @@
          * Renders the table body with the given data array.
          */
         function renderTable(dataToRender) {
-            if (dataToRender.length === 0) {
+            if (dataToRender.length === 0 && document.getElementById('search-input').value.length > 0) {
+                // Show no results if search term is active
                 tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">कोई परिणाम नहीं मिला।</td></tr>`;
                 return;
+            } else if (dataToRender.length === 0) {
+                 // Show general error if data array is empty but no search term (should be covered by fetchData error)
+                 tableBody.innerHTML = MAIN_TABLE_ERROR_HTML('No data found in the file.');
+                 return;
             }
 
             tableBody.innerHTML = dataToRender.map(celeb => {
@@ -320,7 +407,7 @@
 
                 return `
                     <tr class="hover:bg-gray-800 transition duration-150 ease-in-out">
-                        <!-- Column 1: Celebrity Name -->
+                        <!-- Column 1: Name -->
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
                             ${celeb.name}
                         </td>
@@ -349,40 +436,6 @@
             }).join('');
         }
 
-        /**
-         * Updates the top and bottom mover summary cards.
-         */
-        function updateMoversCards(data) {
-            if (data.length === 0) return;
-
-            // Find Top/Bottom Movers based on Net Movement
-            const topMover = data.reduce((max, celeb) => celeb.netMovement > max.netMovement ? celeb : max, data[0]);
-            const bottomMover = data.reduce((min, celeb) => celeb.netMovement < min.netMovement ? celeb : min, data[0]);
-
-            // --- Top Mover Update ---
-            const topMoverMovement = formatMovement(topMover.netMovement);
-            const topMoverPercent = formatMovement(topMover.changePercentage);
-
-            document.getElementById('top-mover-name').textContent = topMover.name;
-            document.getElementById('top-mover-movement').textContent = topMoverMovement.text;
-            document.getElementById('top-mover-movement').className = `text-xl font-bold ${topMoverMovement.class}`;
-            document.getElementById('top-mover-percent').textContent = ` (${topMoverPercent.text}%)`;
-            document.getElementById('top-mover-percent').className = `ml-3 text-sm font-medium ${topMoverPercent.class}`;
-
-            // --- Bottom Mover Update ---
-            const bottomMoverMovement = formatMovement(bottomMover.netMovement);
-            const bottomMoverPercent = formatMovement(bottomMover.changePercentage);
-            
-            // Note: The lowest mover might still be positive, but is the 'worst' performer compared to the 'best'.
-            // We use the same color logic based on its own sign, not the comparison.
-            const bottomMovementClass = bottomMoverMovement.isPositive ? 'text-yellow-400' : 'text-red-400';
-
-            document.getElementById('bottom-mover-name').textContent = bottomMover.name;
-            document.getElementById('bottom-mover-movement').textContent = bottomMoverMovement.text;
-            document.getElementById('bottom-mover-movement').className = `text-xl font-bold ${bottomMovementClass}`;
-            document.getElementById('bottom-mover-percent').textContent = ` (${bottomMoverPercent.text}%)`;
-            document.getElementById('bottom-mover-percent').className = `ml-3 text-sm font-medium ${bottomMoverPercent.class}`;
-        }
     </script>
 </body>
 </html>
