@@ -45,7 +45,8 @@
         }
     </style>
 </head>
-<body class="antialiased">
+<!-- Added flex and min-h-screen for full height layout (flush bottom) -->
+<body class="antialiased flex flex-col min-h-screen"> 
 
     <!-- Help Modal (Internal Component - Rounded Corners Reintroduced) -->
     <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -74,7 +75,8 @@
     <!-- Header: Sticky and Professional (Full Width - Sharp Edges) -->
     <header class="sticky top-0 z-10 bg-[--color-bg-surface] shadow-xl border-b border-gray-700">
         <!-- Inner Header Content (Keeping small horizontal padding for logo/text spacing) -->
-        <div class="w-full px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+        <!-- Reduced horizontal padding from px-4 to px-3 -->
+        <div class="w-full px-3 py-4 sm:px-5 lg:px-7 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <!-- Logo Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2v-7.5"/><path d="M17.5 7.5L20 5 22.5 7.5"/><path d="M17.5 10.5L20 13 22.5 10.5"/><path d="M19 14.5L20 12l1-2.5"/></svg>
@@ -94,14 +96,13 @@
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="w-full">
+    <!-- Main Content Container: Added flex-grow and flex-col for flush bottom layout -->
+    <main class="w-full flex-grow flex flex-col"> 
         
         <!-- 1. Top Movers Summary Cards (Vertical on mobile, horizontal on sm+) -->
-        <!-- Adjusted classes: grid-cols-1 sm:grid-cols-2, gap-4 (reduced), mb-4 pt-4 (reduced external vertical space), px-3 (reduced external horizontal space on mobile) -->
-        <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 px-3 sm:px-6 lg:px-8 pt-4">
-            <!-- Highest Growth Card -->
-            <!-- Reduced internal padding from p-6 to p-4 -->
+        <!-- Reduced external vertical space (mb-2, pt-2) and horizontal padding (px-2, sm:px-4, lg:px-6). Reduced gap (gap-3) -->
+        <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2 px-2 sm:px-4 lg:px-6 pt-2">
+            <!-- Highest Growth Card (Internal padding maintained for readability) -->
             <div id="top-mover-card" class="bg-gray-800 p-4 shadow-lg border border-gray-700 rounded-xl">
                 <p class="text-sm font-medium text-gray-400">📈 Highest Daily Growth</p>
                 <h2 class="text-2xl font-bold mt-1 text-white truncate" id="top-mover-name">Loading...</h2>
@@ -110,8 +111,7 @@
                     <span id="top-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
                 </div>
             </div>
-            <!-- Lowest Growth Card -->
-            <!-- Reduced internal padding from p-6 to p-4 -->
+            <!-- Lowest Growth Card (Internal padding maintained for readability) -->
             <div id="bottom-mover-card" class="bg-gray-800 p-4 shadow-lg border border-gray-700 rounded-xl">
                 <p class="text-sm font-medium text-gray-400">📉 Lowest Daily Growth</p>
                 <h2 class="text-2xl font-bold mt-1 text-white truncate" id="bottom-mover-name">Loading...</h2>
@@ -123,7 +123,8 @@
         </div>
 
         <!-- 2. Controls Bar -->
-        <div class="bg-[--color-bg-surface] p-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 border-b border-gray-700 px-4 sm:px-6 lg:px-8">
+        <!-- Reduced padding (p-3) and horizontal padding (px-2, sm:px-4, lg:px-6) -->
+        <div class="bg-[--color-bg-surface] p-3 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-3 border-b border-gray-700 px-2 sm:px-4 lg:px-6">
             <!-- Search Input -->
             <div class="relative w-full sm:w-80">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -156,26 +157,26 @@
             </div>
         </div>
 
-        <!-- 3. Main Data Table -->
-        <div class="bg-[--color-bg-surface] shadow-2xl overflow-x-auto"> 
+        <!-- 3. Main Data Table: Added flex-grow to ensure it takes up remaining space and extends to the bottom -->
+        <div class="bg-[--color-bg-surface] shadow-2xl overflow-x-auto flex-grow"> 
             <table class="min-w-full divide-y divide-gray-700">
                 
-                <!-- Table Header -->
+                <!-- Table Header: Reduced py-3.5 to py-3 -->
                 <thead class="bg-gray-800 sticky top-[68px]"> 
                     <tr>
-                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6">
+                        <th scope="col" class="py-3 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6">
                             Name
                         </th>
-                        <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
+                        <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
                             Aura Score (AS)
                         </th>
-                        <th scope="col" class="hidden sm:table-cell px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
+                        <th scope="col" class="hidden sm:table-cell px-3 py-3 text-right text-sm font-semibold text-gray-400">
                             Previous Day's Score
                         </th>
-                        <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
+                        <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
                             Net Movement
                         </th>
-                        <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-400">
+                        <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
                             Daily % Change
                         </th>
                     </tr>
@@ -396,8 +397,8 @@
          */
         function renderTable(dataToRender) {
             if (dataToRender.length === 0 && document.getElementById('search-input').value.length > 0) {
-                // Show no results if search term is active
-                tableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">कोई परिणाम नहीं मिला।</td></tr>`;
+                // Show 'No results found' if search term is active. Reduced padding here for consistency (px-4 py-3).
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-sm text-gray-500">कोई परिणाम नहीं मिला।</td></tr>`;
                 return;
             } else if (dataToRender.length === 0) {
                  // Show general error if data array is empty but no search term (should be covered by fetchData error)
@@ -412,27 +413,32 @@
                 return `
                     <tr class="hover:bg-gray-800 transition duration-150 ease-in-out">
                         <!-- Column 1: Name -->
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
+                        <!-- Reduced vertical padding from py-4 to py-3 -->
+                        <td class="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
                             ${celeb.name}
                         </td>
                         
                         <!-- Column 2: Aura Score (Current Score) -->
-                        <td class="numeric px-3 py-4 text-sm text-white">
+                        <!-- Reduced vertical padding from py-4 to py-3 -->
+                        <td class="numeric px-3 py-3 text-sm text-white">
                             ${celeb.aura_score.toFixed(2)}
                         </td>
                         
                         <!-- Column 3: Previous Day's AS -->
-                        <td class="hidden sm:table-cell numeric px-3 py-4 text-sm text-[--color-text-secondary]">
+                        <!-- Reduced vertical padding from py-4 to py-3 -->
+                        <td class="hidden sm:table-cell numeric px-3 py-3 text-sm text-[--color-text-secondary]">
                             ${celeb.previous_aura_score.toFixed(2)}
                         </td>
                         
                         <!-- Column 4: Net Movement (Today's Change) -->
-                        <td class="numeric px-3 py-4 text-sm ${movementClass}">
+                        <!-- Reduced vertical padding from py-4 to py-3 -->
+                        <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${movementText}
                         </td>
                         
                         <!-- Column 5: Daily % Chg -->
-                        <td class="numeric px-3 py-4 text-sm ${movementClass}">
+                        <!-- Reduced vertical padding from py-4 to py-3 -->
+                        <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${percentText}%
                         </td>
                     </tr>
