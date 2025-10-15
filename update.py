@@ -4,8 +4,8 @@ from datetime import datetime
 import pytz
 # NEW SDK: google.genai का उपयोग करें
 from google import genai
-# FIX: 'ResourceExhaustedError' को 'QuotaError' से बदलें
-from google.genai.errors import APIError, ResourceExhaustedError, InternalError
+# FIX: QuotaError या ResourceExhaustedError को हटा दें, वे APIError के अंतर्गत आएंगे
+from google.genai.errors import APIError, InternalError
 
 # --- Configuration ---
 API_KEY = os.getenv('GEMINI_API_KEY')
@@ -59,7 +59,7 @@ def update_aura_scores():
         # --- ROBUST API CALL BLOCK START ---
         
         try:
-            # NEW CALL SYNTAX: client.models.generate_content का उपयोग करें
+            # API Call Syntax
             response = client.models.generate_content(
                 model=MODEL_NAME, 
                 contents=prompt,
@@ -68,14 +68,14 @@ def update_aura_scores():
                 )
             )
         
-        # 1. Google-specific exceptions को पकड़ें (QuotaError = Rate Limit/ResourceExhausted)
-        except (APIError, QuotaError, InternalError) as e:
+        # 1. Google-specific exceptions को पकड़ें (APIError में Authentication/Quota/Invalid Request शामिल है)
+        except (APIError, InternalError) as e:
             print(f"\n🚨 CRITICAL GOOGLE API ERROR DETECTED (Handled API Error)!")
             print(f"Error Type: {type(e).__name__}")
             print(f"Error Details: {e}")
             exit(1)
         
-        # 2. सामान्य अपवाद को पकड़ें (Network/System/Authentication Error)
+        # 2. सामान्य अपवाद को पकड़ें (Low-level Network/System Error)
         except Exception as e:
             print(f"\n❌ CRITICAL UNHANDLED CONNECTION/SYSTEM ERROR DETECTED!")
             print(f"Error Type: {type(e).__name__}")
