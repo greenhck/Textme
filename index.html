@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Market</title>
+    <title>Flux - Aura Market</title>
     <!-- We still include chart.js because the original code used it, 
          but the chart rendering logic is removed as per request. -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -31,11 +31,17 @@
         .header {
             background-color: var(--surface-color);
             padding: 15px 20px 10px;
-            text-align: center;
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
+        }
+        
+        /* NEW: Wrapper for title and time alignment */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header h1 {
@@ -43,16 +49,24 @@
             font-size: 1.8em;
             font-weight: 500;
             letter-spacing: 1px;
+            text-align: left; /* Left align title */
         }
         
-        .last-updated {
-            font-size: 0.8em;
+        .last-updated-time { /* NEW: for time only, right aligned */
+            font-size: 0.9em;
             color: #888;
-            margin-top: 5px;
+            margin-top: 0; 
+            text-align: right; /* Right align time */
+            white-space: nowrap;
+        }
+        
+        /* Old .last-updated is now obsolete, replacing with .last-updated-time */
+        .last-updated { 
+            display: none; 
         }
 
         .main-container {
-            padding: 0 10px 10px; /* Removed top padding, added margin for icon-bar */
+            padding: 0 10px 10px; 
         }
         
         /* New Styles for Icon Bar and Search */
@@ -151,14 +165,17 @@
         .aura-table th.name-header, .aura-table td.name-cell {
             text-align: left;
             font-weight: 600;
-            width: 30%; /* Allocate more width for name */
+            width: 28%; /* Reduced from 30% to reduce gap */
         }
         
         .aura-table th:nth-child(2), /* Aura Score */
+        .aura-table th:nth-child(5) { /* YCS */
+            width: 18.5%; /* Increased from 17.5% to reduce gap */
+        }
+        
         .aura-table th:nth-child(3), /* Change % */
-        .aura-table th:nth-child(4), /* Today's Change */
-        .aura-table th:nth-child(5) { /* Last Day AS */
-            width: 17.5%;
+        .aura-table th:nth-child(4) { /* Today's Change */
+            width: 17.5%; /* Same */
         }
         
         .aura-table td.name-cell {
@@ -278,8 +295,13 @@
 <body>
 
     <header class="header">
-        <h1>Aura Market</h1>
-        <div class="last-updated">Last Updated: <span id="update-time">--:--</span> IST</div>
+        <div class="header-content">
+            <h1>Flux - Aura Market</h1>
+            <div class="last-updated-time">
+                <span id="update-time">--:--</span> IST
+            </div>
+        </div>
+        <!-- Original .last-updated removed as requested -->
     </header>
     
     <div class="action-bar">
@@ -304,7 +326,7 @@
                     <th data-sort-key="aura_score">Aura Score <i class="fas fa-sort"></i></th>
                     <th data-sort-key="change_percent">Change % <i class="fas fa-sort"></i></th>
                     <th data-sort-key="today_change">Today's Change <i class="fas fa-sort"></i></th>
-                    <th data-sort-key="previous_aura_score">Last Day AS <i class="fas fa-sort"></i></th>
+                    <th data-sort-key="previous_aura_score">YCS <i class="fas fa-sort"></i></th> <!-- Changed from Last Day AS to YCS -->
                 </tr>
             </thead>
             <tbody id="aura-data">
@@ -325,6 +347,14 @@
                 <li>Recent professional achievements or public events</li>
             </ul>
             <p>The score updates frequently, and its movement reflects market sentiment around the individual.</p>
+            <!-- NEW: Added full forms of shortcuts -->
+            <p>
+                **Shortcut Full Forms:**<br>
+                **AS** (Aura Score), 
+                **CP** (Change Percent), 
+                **TC** (Today's Change), 
+                **YCS** (Yesterday Change Score, which is the Previous Day's Aura Score).
+            </p>
             <button class="modal-close" id="modal-close-button">Close</button>
         </div>
     </div>
@@ -334,9 +364,6 @@
         let allCelebrities = [];
         let sortColumn = 'aura_score'; 
         let sortDirection = 'desc'; // Default: high to low
-        
-        // Auth token is not needed for this client-side data file
-        // const apiKey = ""; 
         
         // --- Utility Functions for Sorting ---
         
@@ -386,6 +413,7 @@
                 const response = await fetch(`data.json?v=${new Date().getTime()}`);
                 const data = await response.json();
                 
+                // Changed from 'update-time' to 'last-updated-time' text content
                 document.getElementById('update-time').textContent = data.last_updated;
                 allCelebrities = data.celebrities; // Store the initial data
 
