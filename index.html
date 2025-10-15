@@ -76,6 +76,7 @@
         <!-- Inner Header Content (Keeping small horizontal padding for logo/text spacing) -->
         <div class="w-full px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <div class="flex items-center space-x-3">
+                <!-- Logo Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2v-7.5"/><path d="M17.5 7.5L20 5 22.5 7.5"/><path d="M17.5 10.5L20 13 22.5 10.5"/><path d="M19 14.5L20 12l1-2.5"/></svg>
                 <h1 class="text-2xl font-bold tracking-tight text-white">Flux - Aura Market</h1>
             </div>
@@ -85,20 +86,23 @@
                     <span id="update-time" class="font-medium text-white">--:-- IST</span>
                 </div>
                 <!-- Help Icon Button -->
-                <button onclick="toggleHelpModal(true)" class="p-2 hover:bg-gray-700 transition rounded-full" title="Aura Score गणना कैसे होती है"> <!-- बटन पर गोल किनारे वापस जोड़े गए -->
+                <button onclick="toggleHelpModal(true)" class="p-2 hover:bg-gray-700 transition rounded-full" title="Aura Score गणना कैसे होती है">
+                    <!-- Adjusted position of icon relative to button padding -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container (Full Width - Sharp Edges) -->
+    <!-- Main Content Container -->
     <main class="w-full">
         
-        <!-- 1. Top Movers Summary Cards (Always horizontal - grid-cols-2) -->
-        <div id="movers-summary" class="grid grid-cols-2 gap-6 mb-8 px-4 sm:px-6 lg:px-8 pt-8">
+        <!-- 1. Top Movers Summary Cards (Vertical on mobile, horizontal on sm+) -->
+        <!-- Adjusted classes: grid-cols-1 sm:grid-cols-2, gap-4 (reduced), mb-4 pt-4 (reduced external vertical space), px-3 (reduced external horizontal space on mobile) -->
+        <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 px-3 sm:px-6 lg:px-8 pt-4">
             <!-- Highest Growth Card -->
-            <div id="top-mover-card" class="bg-gray-800 p-6 shadow-lg border border-gray-700 rounded-xl">
+            <!-- Reduced internal padding from p-6 to p-4 -->
+            <div id="top-mover-card" class="bg-gray-800 p-4 shadow-lg border border-gray-700 rounded-xl">
                 <p class="text-sm font-medium text-gray-400">📈 Highest Daily Growth</p>
                 <h2 class="text-2xl font-bold mt-1 text-white truncate" id="top-mover-name">Loading...</h2>
                 <div id="top-mover-data" class="flex items-center mt-2">
@@ -107,7 +111,8 @@
                 </div>
             </div>
             <!-- Lowest Growth Card -->
-            <div id="bottom-mover-card" class="bg-gray-800 p-6 shadow-lg border border-gray-700 rounded-xl">
+            <!-- Reduced internal padding from p-6 to p-4 -->
+            <div id="bottom-mover-card" class="bg-gray-800 p-4 shadow-lg border border-gray-700 rounded-xl">
                 <p class="text-sm font-medium text-gray-400">📉 Lowest Daily Growth</p>
                 <h2 class="text-2xl font-bold mt-1 text-white truncate" id="bottom-mover-name">Loading...</h2>
                 <div id="bottom-mover-data" class="flex items-center mt-2">
@@ -117,9 +122,9 @@
             </div>
         </div>
 
-        <!-- 2. Controls Bar (Full Width Container - Sharp Edges) -->
+        <!-- 2. Controls Bar -->
         <div class="bg-[--color-bg-surface] p-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 border-b border-gray-700 px-4 sm:px-6 lg:px-8">
-            <!-- Search Input (Internal Component - Rounded Corners) -->
+            <!-- Search Input -->
             <div class="relative w-full sm:w-80">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3">
                     <!-- Search Icon -->
@@ -138,7 +143,7 @@
                 </div>
             </div>
 
-            <!-- Sort Dropdown (Internal Component - Rounded Corners) -->
+            <!-- Sort Dropdown -->
             <div class="flex items-center space-x-2 w-full sm:w-auto">
                 <label for="sort-select" class="text-gray-400 text-sm whitespace-nowrap hidden sm:block">Sort By:</label>
                 <select id="sort-select" onchange="handleSearchAndSort()" class="bg-gray-700 text-white py-2.5 px-3 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg">
@@ -151,11 +156,11 @@
             </div>
         </div>
 
-        <!-- 3. Main Data Table (Full Width Container - Sharp Edges) -->
+        <!-- 3. Main Data Table -->
         <div class="bg-[--color-bg-surface] shadow-2xl overflow-x-auto"> 
             <table class="min-w-full divide-y divide-gray-700">
                 
-                <!-- Table Header (Full words, no abbreviations) -->
+                <!-- Table Header -->
                 <thead class="bg-gray-800 sticky top-[68px]"> 
                     <tr>
                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6">
@@ -275,7 +280,8 @@
                 // --- Bottom Mover Update ---
                 const bottomMoverMovement = formatMovement(bottomMover.netMovement);
                 const bottomMoverPercent = formatMovement(bottomMover.changePercentage);
-                const bottomMovementClass = bottomMoverMovement.isPositive ? 'text-yellow-400' : 'text-red-400';
+                // For lowest growth, we often highlight it in red unless the "worst" performer is still positive (yellow)
+                const bottomMovementClass = bottomMoverMovement.isPositive ? 'text-yellow-400' : 'text-red-400'; 
 
                 document.getElementById('bottom-mover-name').textContent = bottomMover.name;
                 document.getElementById('bottom-mover-data').innerHTML = `
@@ -380,13 +386,9 @@
                 }
             });
 
-            // 2. Render the filtered and sorted data
-            
-            // Use setTimeout to allow the search spinner animation to be visible
-            setTimeout(() => {
-                 renderTable(filteredData);
-                 searchSpinner.classList.add('hidden');
-            }, 100);
+            // 2. Render the filtered and sorted data immediately (removed setTimeout for responsiveness)
+            renderTable(filteredData);
+            searchSpinner.classList.add('hidden');
         }
 
         /**
