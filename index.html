@@ -162,20 +162,18 @@
             color: var(--highlight-color);
         }
         
+        /* Column Widths adjusted for 4 columns */
         .aura-table th.name-header, .aura-table td.name-cell {
             text-align: left;
             font-weight: 600;
-            width: 28%; /* Reduced from 30% to reduce gap */
+            width: 30%; 
         }
-        
-        .aura-table th:nth-child(2), /* Aura Score */
-        .aura-table th:nth-child(5) { /* YCS */
-            width: 18.5%; /* Increased from 17.5% to reduce gap */
-        }
-        
-        .aura-table th:nth-child(3), /* Change % */
-        .aura-table th:nth-child(4) { /* Today's Change */
-            width: 17.5%; /* Same */
+
+        /* Remaining 3 columns (Aura Score, Today's Change, YCS) */
+        .aura-table th:nth-child(2),
+        .aura-table th:nth-child(3),
+        .aura-table th:nth-child(4) { 
+            width: 23.33%; /* (100% - 30%) / 3 = 23.33% each */
         }
         
         .aura-table td.name-cell {
@@ -265,7 +263,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile Responsive Shortcuts */
+        /* Mobile Responsive Shortcuts: Hides 'Today's Change' column (now 3rd) */
         @media (max-width: 600px) {
             body {
                 font-size: 13px;
@@ -276,8 +274,9 @@
             .aura-table th, .aura-table td {
                 padding: 10px 3px;
             }
-            .aura-table th:nth-child(4), /* Hides the Today's Change (TC) column on small screens */
-            .aura-table td:nth-child(4) {
+            /* Hides the 'Today's Change' (3rd) column on small screens */
+            .aura-table th:nth-child(3), 
+            .aura-table td:nth-child(3) {
                 display: none;
             }
             .icon-group {
@@ -288,6 +287,11 @@
             }
             .aura-table th.name-header, .aura-table td.name-cell {
                 width: 35%;
+            }
+            /* Remaining 2 columns (2nd, 4th) */
+            .aura-table th:nth-child(2), 
+            .aura-table th:nth-child(4) { 
+                width: 32.5%; /* (100% - 35%) / 2 = 32.5% each */
             }
         }
     </style>
@@ -301,7 +305,6 @@
                 <span id="update-time">--:--</span> IST
             </div>
         </div>
-        <!-- Original .last-updated removed as requested -->
     </header>
     
     <div class="action-bar">
@@ -324,9 +327,9 @@
                 <tr>
                     <th class="name-header" data-sort-key="name">Name <i class="fas fa-sort"></i></th>
                     <th data-sort-key="aura_score">Aura Score <i class="fas fa-sort"></i></th>
-                    <th data-sort-key="change_percent">Change % <i class="fas fa-sort"></i></th>
+                    <!-- REMOVED: Change % Column -->
                     <th data-sort-key="today_change">Today's Change <i class="fas fa-sort"></i></th>
-                    <th data-sort-key="previous_aura_score">YCS <i class="fas fa-sort"></i></th> <!-- Changed from Last Day AS to YCS -->
+                    <th data-sort-key="today_change">YCS <i class="fas fa-sort"></i></th> <!-- YCS now uses same sort key as it displays the same change value -->
                 </tr>
             </thead>
             <tbody id="aura-data">
@@ -347,13 +350,12 @@
                 <li>Recent professional achievements or public events</li>
             </ul>
             <p>The score updates frequently, and its movement reflects market sentiment around the individual.</p>
-            <!-- NEW: Added full forms of shortcuts -->
+            <!-- UPDATED: Removed CP and updated YCS definition -->
             <p>
                 **Shortcut Full Forms:**<br>
                 **AS** (Aura Score), 
-                **CP** (Change Percent), 
                 **TC** (Today's Change), 
-                **YCS** (Yesterday Change Score, which is the Previous Day's Aura Score).
+                **YCS** (Yesterday Change Score, which is the daily change value).
             </p>
             <button class="modal-close" id="modal-close-button">Close</button>
         </div>
@@ -369,14 +371,10 @@
         
         function getSortValue(item, key) {
             // Special handling for calculated values
-            if (key === 'change_percent') {
-                const todayChange = item.aura_score - item.previous_aura_score;
-                return item.previous_aura_score === 0 ? 0 : (todayChange / item.previous_aura_score) * 100;
-            }
             if (key === 'today_change') {
                 return item.aura_score - item.previous_aura_score;
             }
-            // Default for direct properties (name, aura_score, previous_aura_score)
+            // Default for direct properties (name, aura_score)
             return item[key];
         }
 
@@ -413,7 +411,6 @@
                 const response = await fetch(`data.json?v=${new Date().getTime()}`);
                 const data = await response.json();
                 
-                // Changed from 'update-time' to 'last-updated-time' text content
                 document.getElementById('update-time').textContent = data.last_updated;
                 allCelebrities = data.celebrities; // Store the initial data
 
@@ -448,16 +445,14 @@
 
                 // Calculations
                 const todayChange = celeb.aura_score - celeb.previous_aura_score;
-                const changePercentage = celeb.previous_aura_score === 0 ? 0 : (todayChange / celeb.previous_aura_score) * 100;
                 const changeClass = todayChange >= 0 ? 'positive' : 'negative';
                 const sign = todayChange >= 0 ? '+' : '';
 
                 row.innerHTML = `
                     <td class="name-cell">${celeb.name}</td>
                     <td class="aura-score">${celeb.aura_score.toFixed(2)}</td>
-                    <td class="change-values ${changeClass}">${sign}${changePercentage.toFixed(2)}%</td>
-                    <td class="change-values ${changeClass}">${sign}${todayChange.toFixed(2)}</td>
-                    <td>${celeb.previous_aura_score.toFixed(2)}</td>
+                    <td class="change-values ${changeClass}">${sign}${todayChange.toFixed(2)}</td> <!-- Today's Change (3rd column) -->
+                    <td class="change-values ${changeClass}">${sign}${todayChange.toFixed(2)}</td> <!-- YCS (4th column, showing change) -->
                 `;
                 tableBody.appendChild(row);
             });
