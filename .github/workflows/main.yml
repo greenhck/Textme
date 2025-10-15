@@ -32,27 +32,15 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python update.py
 
-      - name: Commit and push changes
-        shell: bash
-        run: |
-          # Configure Git identity
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # Clean working directory to avoid rebase/pull errors
-          git reset --hard
-          git clean -fd
-
-          # Check if data.json changed
-          if git diff --exit-code data.json > /dev/null; then
-            echo "No changes detected — skipping commit."
-            exit 0
-          fi
-
-          # Commit and push
-          COMMIT_MSG="📈 Aura Market Daily Update: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          git add data.json
-          git commit -m "${COMMIT_MSG}"
-          git push origin main
-
-          echo "✅ Update committed and pushed successfully."
+      # --- पुराना Git स्टेप हटाया गया (Removed old Git step) ---
+      
+      - name: Commit and push changes using auto-commit action 🔄
+        uses: stefanzweifel/git-auto-commit-action@v5 # <<< यह नया एक्शन है
+        with:
+          # हम सिर्फ़ data.json फ़ाइल को कमिट करना चाहते हैं
+          file_pattern: 'data.json'
+          # कमिट मैसेज (Commit Message)
+          commit_message: "📈 Aura Market Daily Update: ${{ github.run_id }}"
+          # बॉट डिटेल्स (Bot Details)
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
