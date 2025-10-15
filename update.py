@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 import pytz
 from google import genai
-# FIX: Only import the core APIError class, which catches almost all service errors.
+# केवल APIError को इंपोर्ट करें जो अधिकांश समस्याओं को कवर करता है।
 from google.genai.errors import APIError
 
 # --- Configuration ---
@@ -14,18 +14,17 @@ if not API_KEY:
 
 # Client Initialization
 try:
-    # Client Initialization Key is automatically picked up from the Environment Variable
+    # Key is automatically picked up from the Environment Variable
     client = genai.Client()
     print("✅ Gemini API Client initialized.")
 except Exception as e:
-    # Catches issues with the API key format or initial connection setup.
     print(f"❌ Initialization Error: Could not initialize Gemini client. Details: {e}")
     exit(1)
     
 MODEL_NAME = 'gemini-2.5-flash-lite'
 
 def get_bulk_aura_change_prompt(celebrity_names):
-    """Generates the bulk Aura Score change prompt for the given celebrity names."""
+    """Generates the bulk Aura Score change prompt."""
     names_string = ", ".join(celebrity_names)
     return (f"Analyze all significant positive and negative news, professional activities, "
             f"social media sentiment, and public statements for the following celebrities "
@@ -38,10 +37,13 @@ def get_bulk_aura_change_prompt(celebrity_names):
 
 def update_aura_scores():
     data = {}
-    response_text = "ERROR: Raw response text not captured before API call."
+    
+    # response_text को try ब्लॉक के बाहर खाली स्ट्रिंग से इनिशियलाइज़ करें
+    # ताकि JSONDecodeError के मामले में यह कोई बकवास पार्स करने की कोशिश न करे।
+    response_text = ""
     
     try:
-        # 1. Read the existing data 
+        # 1. Read the existing data (No Change)
         with open('data.json', 'r') as f:
             data = json.load(f)
             
@@ -56,7 +58,7 @@ def update_aura_scores():
         print(f"Making a single API call for {len(celebrity_names)} celebrities...")
         prompt = get_bulk_aura_change_prompt(celebrity_names)
         
-        # --- ROBUST API CALL BLOCK START ---
+        # --- FINAL BRUTE-FORCE API CALL BLOCK START ---
         
         try:
             # API Call Syntax
@@ -68,22 +70,23 @@ def update_aura_scores():
                 )
             )
         
-        # 1. Catch all specific Google API exceptions (Authentication, Quota, Internal, etc.)
+        # CATCH ALL EXCEPTIONS (APIError catches Google service issues)
         except APIError as e:
             print(f"\n🚨 CRITICAL GOOGLE API ERROR DETECTED (Handled API Error)!")
             print(f"Error Type: {type(e).__name__}")
             print(f"Error Details: {e}")
-            # This is where we'd see the AuthenticationError or QuotaError details
             exit(1)
         
-        # 2. Catch generic exceptions (Low-level network failure, connection loss)
+        # CATCH ALL UNHANDLED EXCEPTIONS (This is the block we NEED to hit)
         except Exception as e:
-            print(f"\n❌ CRITICAL UNHANDLED CONNECTION/SYSTEM ERROR DETECTED!")
+            # If we land here, the key is invalid or the connection is blocked.
+            print(f"\n❌ CRITICAL UNHANDLED CONNECTION/AUTHENTICATION ERROR DETECTED!")
+            print(f"The API call failed at a low level, suggesting an issue with the **API Key** or **Network Access**.")
             print(f"Error Type: {type(e).__name__}")
             print(f"Error Details: {e}")
             exit(1)
             
-        # --- ROBUST API CALL BLOCK END ---
+        # --- FINAL BRUTE-FORCE API CALL BLOCK END ---
 
         # 3. Check for empty or blocked response
         if not response.text or not response.candidates[0].content.parts[0].text:
@@ -95,7 +98,7 @@ def update_aura_scores():
         
         print("Successfully received and parsed bulk aura changes.")
 
-        # 4. Loop through celebrities and update their data
+        # 4. Loop through celebrities and update their data (No Change)
         for celeb in celebrities:
             aura_change = aura_changes.get(celeb['name'], 0.0)
             
@@ -113,18 +116,19 @@ def update_aura_scores():
             trend.append(celeb['aura_score'])
             celeb['trend_7_days'] = trend
 
-        # 5. Update the timestamp to IST
+        # 5. Update the timestamp to IST (No Change)
         ist = pytz.timezone('Asia/Kolkata')
         data['last_updated'] = datetime.now(ist).strftime('%d-%m-%Y %H:%M:%S IST')
 
-        # 6. Write back the updated data 
+        # 6. Write back the updated data (No Change)
         with open('data.json', 'w') as f:
             json.dump(data, f, indent=4)
             
         print("Aura Market data updated successfully.")
 
     except (json.JSONDecodeError, ValueError) as e:
-        # This catches errors if the API response is not valid JSON
+        # If response_text is empty or contains an API key error message, it will land here.
+        # This is the old error path we are trying to avoid.
         print(f"CRITICAL ERROR: Failed to process API response (JSON/Data Error). Raw response:\n---START RAW RESPONSE---\n{response_text}\n---END RAW RESPONSE---\nError: {e}")
         exit(1)
     except Exception as e:
