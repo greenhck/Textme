@@ -5,23 +5,16 @@ import pytz
 import google.generativeai as genai
 
 # --- Configuration ---
-# Fetch API key from GitHub Secrets
 API_KEY = os.getenv('GEMINI_API_KEY')
 if not API_KEY:
     print("WARNING: GEMINI_API_KEY secret not found! Exiting.")
     exit()
 
-# Configure Gemini
 genai.configure(api_key=API_KEY)
 MODEL_NAME = 'gemini-2.5-flash-lite'
 
 def get_bulk_aura_change_prompt(celebrity_names):
-    """
-    Generates a single, powerful prompt to get data for all celebrities at once.
-    """
     names_string = ", ".join(celebrity_names)
-    
-    # Prompt is designed to guide the model towards a single score change
     return (f"Analyze all significant positive and negative news, professional activities, "
             f"social media sentiment, and public statements for the following celebrities "
             f"over the last 24 hours: {names_string}. "
@@ -33,19 +26,15 @@ def get_bulk_aura_change_prompt(celebrity_names):
             f"The output MUST BE ONLY THE JSON OBJECT and nothing else.")
 
 def update_aura_scores():
-    """
-    Fetches celebrity data, gets all aura changes in a single API call, and updates data.json.
-    """
     data = {}
-    response_text = "No response text available (Error occurred before API call)" # Initialize for robust logging
+    response_text = "ERROR: Raw response text not captured before API call." # Initialize for robust logging
     
     try:
-        # 1. Read the existing data from the file
+        # 1. Read the existing data
         with open('data.json', 'r') as f:
             data = json.load(f)
             
         celebrities = data.get('celebrities', [])
-        
         celebrity_names = [celeb['name'] for celeb in celebrities]
         
         if not celebrity_names:
@@ -57,7 +46,6 @@ def update_aura_scores():
         model = genai.GenerativeModel(MODEL_NAME)
         prompt = get_bulk_aura_change_prompt(celebrity_names)
         
-        # KEY FIX: Use response_mime_type to guarantee a valid JSON response text
         response = model.generate_content(
             prompt,
             config=genai.types.GenerateContentConfig(
@@ -65,32 +53,34 @@ def update_aura_scores():
             )
         )
         
-        # 3. Parse the JSON response (Now guaranteed to be JSON)
+        # 🌟 NEW DEBUGGING STEP 🌟
+        print("DEBUG: API call succeeded. Checking response text.")
+        
+        # 3. Parse the JSON response
         response_text = response.text.strip()
         
-        # The response text IS the JSON object when response_mime_type is used
-        aura_changes = json.loads(response_text)
+        # 🌟 NEW DEBUGGING STEP 🌟
+        print(f"DEBUG: Raw response text length is {len(response_text)} characters.")
+        
+        # *** Fails Here ***
+        aura_changes = json.loads(response_text) 
+        
         print("Successfully received and parsed bulk aura changes.")
 
-        # 4. Loop through celebrities and update their data
+        # 4. Loop through celebrities and update their data (Rest of the logic remains same)
         for celeb in celebrities:
-            # Get the change from the parsed response. Default to 0.0 if a name is missing.
             aura_change = aura_changes.get(celeb['name'], 0.0)
             
-            # Ensure the change is treated as a float
             try:
                 change_value = float(aura_change)
             except ValueError:
                 print(f"Warning: Non-numeric change received for {celeb['name']}: {aura_change}. Setting change to 0.0.")
                 change_value = 0.0
             
-            # Update scores
             celeb['previous_aura_score'] = celeb['aura_score']
             celeb['aura_score'] = round(celeb['aura_score'] + change_value, 2)
             
-            # Update 7-day trend data
             trend = celeb.get('trend_7_days', [celeb['aura_score']] * 7)
-            # Ensure the trend list has at most 7 elements
             trend = trend[-6:] 
             trend.append(celeb['aura_score'])
             celeb['trend_7_days'] = trend
@@ -106,10 +96,9 @@ def update_aura_scores():
         print("Aura Market data updated successfully.")
 
     except json.JSONDecodeError as e:
-        # Detailed logging for JSON error
+        # Detailed logging now shows the problematic response text
         print(f"CRITICAL ERROR: Failed to parse JSON response from API. The raw response was:\n---START RAW RESPONSE---\n{response_text}\n---END RAW RESPONSE---\nError: {e}")
     except Exception as e:
-        # General error handling
         print(f"A critical error occurred: {e}")
 
 if __name__ == '__main__':
