@@ -3,446 +3,509 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flux - Aura Market</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Aura Market</title>
+    <!-- We still include chart.js because the original code used it, 
+         but the chart rendering logic is removed as per request. -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Load Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Custom Tailwind Configuration (using Inter font and a professional dark palette) */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        
         :root {
-            /* Professional Dark Mode Palette */
-            --color-bg-primary: #0a0a0a; /* Deep Black */
-            --color-bg-surface: #1f2937; /* Slightly Lighter Slate */
-            --color-text-main: #f9fafb; /* White */
-            --color-text-secondary: #9ca3af; /* Gray */
-            --color-accent: #3b82f6; /* Blue (Tech/Finance Accent) */
-            --color-positive: #10b981; /* Emerald Green */
-            --color-negative: #ef4444; /* Red */
+            --bg-color: #121212;
+            --surface-color: #1E1E1E;
+            --text-color: #E0E0E0;
+            --border-color: #333333;
+            --positive-color: #00C853; /* A vibrant green */
+            --negative-color: #D50000; /* A strong red */
+            --highlight-color: #007ACC;
         }
-        
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--color-bg-primary);
-            color: var(--color-text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
-        /* Enforce professional right alignment for numbers */
-        .numeric {
-            text-align: right;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums; /* Align decimals */
+        .header {
+            background-color: var(--surface-color);
+            padding: 15px 20px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 500;
+            letter-spacing: 1px;
         }
         
-        /* Animation for main loading spinner (for search/table) */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-            animation: spin 1s linear infinite;
+        .last-updated {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
         }
 
-        /* NEW: Fix for sticky header */
-        .sticky-header-offset {
-            /* Header height: 68px (h-16 in py-4 with default sizes is about 64px, added border/shadow padding) */
-            top: 68px;
+        .main-container {
+            padding: 0 10px 10px; /* Removed top padding, added margin for icon-bar */
+        }
+        
+        /* New Styles for Icon Bar and Search */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-text {
+            color: #ccc;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: color 0.2s;
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .icon-button:hover {
+            color: var(--highlight-color);
+            background-color: #2a2a2a;
+        }
+        
+        .search-input-container {
+            flex-grow: 1;
+            margin-right: 15px;
+            display: none; /* Hidden by default */
+            transition: all 0.3s ease-in-out;
+        }
+        
+        #search-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: #333;
+            color: var(--text-color);
+            font-size: 0.9em;
+        }
+
+        .aura-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed; /* Ensures fixed column widths */
+        }
+
+        .aura-table th, .aura-table td {
+            padding: 10px 5px; /* Reduced padding for mobile fit */
+            text-align: right;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+            overflow: hidden; /* Important for fixed layout */
+            text-overflow: ellipsis; /* Optional for long names */
+        }
+
+        .aura-table th {
+            font-size: 0.8em;
+            color: #aaa;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            position: sticky;
+            top: 70px; /* Below the header and icon-bar */
+            background-color: #181818;
+            border-top: 1px solid var(--border-color);
+            transition: background-color 0.1s;
+        }
+        
+        .aura-table th:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .aura-table th.sorted {
+            color: var(--highlight-color);
+        }
+        
+        .aura-table th.name-header, .aura-table td.name-cell {
+            text-align: left;
+            font-weight: 600;
+            width: 30%; /* Allocate more width for name */
+        }
+        
+        .aura-table th:nth-child(2), /* Aura Score */
+        .aura-table th:nth-child(3), /* Change % */
+        .aura-table th:nth-child(4), /* Today's Change */
+        .aura-table th:nth-child(5) { /* Last Day AS */
+            width: 17.5%;
+        }
+        
+        .aura-table td.name-cell {
+             font-size: 0.95em;
+        }
+
+        .aura-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .aura-table tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .aura-score {
+            font-weight: bold;
+            font-size: 1.0em;
+        }
+
+        .change-values {
+            font-weight: 600;
+        }
+
+        .positive {
+            color: var(--positive-color);
+        }
+
+        .negative {
+            color: var(--negative-color);
+        }
+
+        /* Custom Modal (replacing alert/confirm) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .modal-content h3 {
+            color: var(--highlight-color);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .modal-content p {
+            line-height: 1.5;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .modal-close {
+            background-color: var(--highlight-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: #005f99;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsive Shortcuts */
+        @media (max-width: 600px) {
+            body {
+                font-size: 13px;
+            }
+            .header h1 {
+                font-size: 1.4em;
+            }
+            .aura-table th, .aura-table td {
+                padding: 10px 3px;
+            }
+            .aura-table th:nth-child(4), /* Hides the Today's Change (TC) column on small screens */
+            .aura-table td:nth-child(4) {
+                display: none;
+            }
+            .icon-group {
+                gap: 10px;
+            }
+            .action-text {
+                font-size: 0.75em;
+            }
+            .aura-table th.name-header, .aura-table td.name-cell {
+                width: 35%;
+            }
         }
     </style>
 </head>
-<body class="antialiased flex flex-col min-h-screen"> 
+<body>
 
-    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-gray-800 shadow-2xl max-w-lg w-full p-6 border border-gray-700 rounded-lg">
-            <div class="flex justify-between items-center pb-3 border-b border-gray-700">
-                <h3 class="text-xl font-bold text-white">ऑरा स्कोर गणना और जानकारी</h3>
-                <button onclick="toggleHelpModal(false)" class="text-gray-400 hover:text-white transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6L18 18"/></svg>
-                </button>
-            </div>
-            <p class="mt-4 text-gray-300">
-                **ऑरा स्कोर** (AS) एक इंडेक्स है जो किसी भी व्यक्ति की सार्वजनिक प्रतिष्ठा और प्रभाव को दर्शाता है।
-            </p>
-            <p class="mt-2 text-sm text-gray-400">
-                यह स्कोर पिछले 24 घंटों में निम्नलिखित कारकों को जोड़कर गणना किया जाता है:
-                <ul class="list-disc list-inside ml-4 mt-2">
-                    <li>मीडिया कवरेज की मात्रा और गुणवत्ता।</li>
-                    <li>सोशल मीडिया पर जन भावना (Sentiment) और चर्चा।</li>
-                    <li>प्रमुख घोषणाओं और सार्वजनिक प्रतिक्रियाओं का प्रभाव।</li>
-                </ul>
-                यह स्कोर 0 से 2000 के बीच होता है, जहां **उच्च स्कोर** मजबूत सकारात्मक प्रभाव को दर्शाता है।
-            </p>
+    <header class="header">
+        <h1>Aura Market</h1>
+        <div class="last-updated">Last Updated: <span id="update-time">--:--</span> IST</div>
+    </header>
+    
+    <div class="action-bar">
+        <div class="icon-group">
+            <button class="icon-button" id="search-icon" title="Search Name"><i class="fas fa-search"></i></button>
+            <button class="icon-button" id="info-icon" title="How is Aura Score calculated?"><i class="fas fa-question-circle"></i></button>
+            <a href="https://t.me/lovelyakash41" target="_blank" class="icon-button" id="telegram-icon" title="Contact on Telegram"><i class="fab fa-telegram-plane"></i></a>
+        </div>
+        <div class="action-text">measure Aura.</div>
+    </div>
+    
+    <div class="main-container">
+        <!-- Search Input Field -->
+        <div class="search-input-container" id="search-input-container">
+            <input type="text" id="search-input" placeholder="Search by Name...">
+        </div>
+        
+        <table class="aura-table">
+            <thead>
+                <tr>
+                    <th class="name-header" data-sort-key="name">Name <i class="fas fa-sort"></i></th>
+                    <th data-sort-key="aura_score">Aura Score <i class="fas fa-sort"></i></th>
+                    <th data-sort-key="change_percent">Change % <i class="fas fa-sort"></i></th>
+                    <th data-sort-key="today_change">Today's Change <i class="fas fa-sort"></i></th>
+                    <th data-sort-key="previous_aura_score">Last Day AS <i class="fas fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody id="aura-data">
+                <!-- Data will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Custom Modal Structure -->
+    <div class="modal-overlay" id="info-modal-overlay">
+        <div class="modal-content">
+            <h3>How Aura Score is Calculated</h3>
+            <p>Aura Score is a dynamic metric reflecting an individual's perceived influence and activity. It is calculated based on a weighted average of real-time data points, which may include:</p>
+            <ul>
+                <li>Social media engagement (likes, shares, comments)</li>
+                <li>Search engine trends and queries</li>
+                <li>Media mentions and sentiment analysis</li>
+                <li>Recent professional achievements or public events</li>
+            </ul>
+            <p>The score updates frequently, and its movement reflects market sentiment around the individual.</p>
+            <button class="modal-close" id="modal-close-button">Close</button>
         </div>
     </div>
 
-    <header id="main-header" class="sticky top-0 z-20 bg-[--color-bg-surface] shadow-xl border-b border-gray-700">
-        <div class="w-full px-3 py-4 sm:px-5 lg:px-7 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2v-7.5"/><path d="M17.5 7.5L20 5 22.5 7.5"/><path d="M17.5 10.5L20 13 22.5 10.5"/><path d="M19 14.5L20 12l1-2.5"/></svg>
-                <h1 class="text-2xl font-bold tracking-tight text-white">Flux - Aura Market</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div class="text-xs text-right hidden sm:block">
-                    <span class="text-[--color-text-secondary]">Last Indexed:</span> 
-                    <span id="update-time" class="font-medium text-white">--:-- IST</span>
-                </div>
-                <button onclick="toggleHelpModal(true)" class="p-2 hover:bg-gray-700 transition rounded-full" title="Aura Score गणना कैसे होती है">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main class="w-full flex-grow flex flex-col p-2 sm:p-4 lg:p-6 pt-0"> 
-        
-        <div id="movers-summary" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2 -mx-2 sm:-mx-4 lg:-mx-6">
-            
-            <div id="top-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl mx-2 sm:mx-4 lg:mx-6">
-                <p class="text-sm font-medium text-gray-400">📈 Highest Daily Growth</p>
-                <h2 class="text-xl font-bold mt-0.5 text-white truncate" id="top-mover-name">Loading...</h2>
-                <div id="top-mover-data" class="flex items-center mt-1">
-                    <span id="top-mover-movement" class="text-lg font-bold text-gray-400">--</span>
-                    <span id="top-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
-                </div>
-            </div>
-            
-            <div id="bottom-mover-card" class="bg-gray-800 p-3 shadow-lg border border-gray-700 rounded-xl mx-2 sm:mx-4 lg:mx-6">
-                <p class="text-sm font-medium text-gray-400">📉 Lowest Daily Growth</p>
-                <h2 class="text-xl font-bold mt-0.5 text-white truncate" id="bottom-mover-name">Loading...</h2>
-                <div id="bottom-mover-data" class="flex items-center mt-1">
-                    <span id="bottom-mover-movement" class="text-lg font-bold text-gray-400">--</span>
-                    <span id="bottom-mover-percent" class="ml-3 text-sm font-medium text-gray-400"> (--)</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-[--color-bg-surface] flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-3 border-b border-gray-700 py-3">
-            <div class="relative w-full sm:w-80">
-                <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21L16.65 16.65"/></svg>
-                </div>
-                <input 
-                    type="text" 
-                    id="search-input" 
-                    placeholder="Search Name..." 
-                    oninput="handleSearchAndSort()"
-                    class="w-full bg-gray-700 text-white border pl-10 pr-10 py-2.5 border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg"
-                >
-                <div id="loading-spinner" class="absolute inset-y-0 right-0 hidden flex items-center pr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-2 w-full sm:w-auto">
-                <label for="sort-select" class="text-gray-400 text-sm whitespace-nowrap hidden sm:block">Sort By:</label>
-                <select id="sort-select" onchange="handleSearchAndSort()" class="bg-gray-700 text-white py-2.5 px-3 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 rounded-lg w-full sm:w-auto">
-                    <option value="score_desc">Aura Score (High to Low)</option>
-                    <option value="score_asc">Aura Score (Low to High)</option>
-                    <option value="change_desc">Daily Growth (High to Low)</option>
-                    <option value="change_asc">Daily Growth (Low to High)</option>
-                    <option value="name_asc">Name (A-Z)</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="bg-[--color-bg-primary] overflow-x-auto flex-grow"> 
-            <table class="min-w-full divide-y divide-gray-700">
-                
-                <thead class="bg-gray-800 sticky sticky-header-offset z-10"> 
-                    <tr>
-                        <th scope="col" class="py-3 pl-4 pr-3 text-left text-sm font-semibold text-gray-400 sm:pl-6 w-full">
-                            Name
-                        </th>
-                        <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
-                            Aura Score
-                        </th>
-                        <th scope="col" class="hidden sm:table-cell px-3 py-3 text-right text-sm font-semibold text-gray-400">
-                            Previous Score
-                        </th>
-                        <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
-                            Net Movement
-                        </th>
-                        <th scope="col" class="px-3 py-3 text-right text-sm font-semibold text-gray-400">
-                            Daily % Change
-                        </th>
-                    </tr>
-                </thead>
-                
-                <tbody id="aura-data" class="divide-y divide-gray-800">
-                    </tbody>
-            </table>
-        </div>
-    </main>
-
     <script>
-        // ... (The JavaScript code remains the same, except for the new CSS class 'sticky-header-offset' used above) ...
-        document.addEventListener('DOMContentLoaded', fetchData);
-
-        let rawAuraData = []; // Stores the fetched data
-        const tableBody = document.getElementById('aura-data');
-        const searchSpinner = document.getElementById('loading-spinner');
-        const ERROR_TIMEOUT_MS = 9000; // 9 seconds
-
-        // --- HTML Templates ---
+        // Global variables to store data and sorting state
+        let allCelebrities = [];
+        let sortColumn = 'aura_score'; 
+        let sortDirection = 'desc'; // Default: high to low
         
-        /** HTML string for the spinning loading circle for the main table */
-        const MAIN_TABLE_SPINNER_HTML = `
-            <tr>
-                <td colspan="5" class="px-6 py-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-400 animate-spin-slow mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
-                </td>
-            </tr>
-        `;
+        // Auth token is not needed for this client-side data file
+        // const apiKey = ""; 
         
-        const MAIN_TABLE_ERROR_HTML = (message) => `
-            <tr>
-                <td colspan="5" class="px-6 py-4 text-center text-lg font-bold text-red-500">
-                    🚨 ERROR: ${message} 🚨
-                </td>
-            </tr>
-        `;
-
-        // --- Helper Functions ---
-
-        function toggleHelpModal(show) {
-            document.getElementById('help-modal').style.display = show ? 'flex' : 'none';
+        // --- Utility Functions for Sorting ---
+        
+        function getSortValue(item, key) {
+            // Special handling for calculated values
+            if (key === 'change_percent') {
+                const todayChange = item.aura_score - item.previous_aura_score;
+                return item.previous_aura_score === 0 ? 0 : (todayChange / item.previous_aura_score) * 100;
+            }
+            if (key === 'today_change') {
+                return item.aura_score - item.previous_aura_score;
+            }
+            // Default for direct properties (name, aura_score, previous_aura_score)
+            return item[key];
         }
 
-        function formatMovement(movement) {
-            const isPositive = movement >= 0;
-            const sign = isPositive ? '+' : '';
-            const colorClass = isPositive ? 'text-green-400' : 'text-red-400';
-            return {
-                text: `${sign}${movement.toFixed(2)}`,
-                class: colorClass,
-                isPositive
-            };
-        }
-        
-        /** Toggles the Mover Cards between Loading/Success/Error states. */
-        function updateMoverCardsState(state = 'loading', data = null) {
-            const updateTime = document.getElementById('update-time');
-            const movers = ['top', 'bottom'];
-
-            if (state === 'error') {
-                updateTime.textContent = '-- Error --';
-                movers.forEach(m => {
-                    const nameEl = document.getElementById(`${m}-mover-name`);
-                    const dataEl = document.getElementById(`${m}-mover-data`);
-                    
-                    nameEl.textContent = 'Error Loading Data';
-                    dataEl.innerHTML = `<span class="text-sm font-medium text-red-500">Could not fetch data.</span>`;
-                });
-                return;
-            }
-
-            if (state === 'loading') {
-                updateTime.textContent = '...Loading...';
-                movers.forEach(m => {
-                    document.getElementById(`${m}-mover-name`).textContent = 'Loading...';
-                    const dataEl = document.getElementById(`${m}-mover-data`);
-                    dataEl.innerHTML = `<span class="text-lg font-bold text-gray-400">--</span><span class="ml-3 text-sm font-medium text-gray-400"> (--)</span>`;
-                });
-                return;
-            }
-            
-            // State: success (data should not be null here)
-            if (data && data.length > 0) {
-                // Find Top/Bottom Movers based on Net Movement
-                const topMover = data.reduce((max, celeb) => celeb.netMovement > max.netMovement ? celeb : max, data[0]);
-                const bottomMover = data.reduce((min, celeb) => celeb.netMovement < min.netMovement ? celeb : min, data[0]);
-
-                // --- Top Mover Update ---
-                const topMoverMovement = formatMovement(topMover.netMovement);
-                const topMoverPercent = formatMovement(topMover.changePercentage);
-
-                document.getElementById('top-mover-name').textContent = topMover.name;
-                document.getElementById('top-mover-data').innerHTML = `
-                    <span id="top-mover-movement" class="${topMoverMovement.class} text-lg font-bold">${topMoverMovement.text}</span>
-                    <span id="top-mover-percent" class="ml-3 text-sm font-medium ${topMoverPercent.class}"> (${topMoverPercent.text}%)</span>
-                `;
-
-
-                // --- Bottom Mover Update ---
-                const bottomMoverMovement = formatMovement(bottomMover.netMovement);
-                const bottomMoverPercent = formatMovement(bottomMover.changePercentage);
-                // For lowest growth, we often highlight it in red unless the "worst" performer is still positive (yellow)
-                const bottomMovementClass = bottomMoverMovement.isPositive ? 'text-yellow-400' : 'text-red-400'; 
-
-                document.getElementById('bottom-mover-name').textContent = bottomMover.name;
-                document.getElementById('bottom-mover-data').innerHTML = `
-                    <span id="bottom-mover-movement" class="${bottomMovementClass} text-lg font-bold">${bottomMoverMovement.text}</span>
-                    <span id="bottom-mover-percent" class="ml-3 text-sm font-medium ${bottomMovementClass}"> (${bottomMoverPercent.text}%)</span>
-                `;
-            } else {
-                 updateMoverCardsState('error');
-            }
-        }
-        
-        /**
-         * Standard sorting logic based on the user's selection.
-         */
-        function applyUserSort(a, b, sortCriteria) {
-            switch (sortCriteria) {
-                case 'score_asc':
-                    return a.aura_score - b.aura_score;
-                case 'change_desc':
-                    return b.netMovement - a.netMovement;
-                case 'change_asc':
-                    return a.netMovement - b.netMovement;
-                case 'name_asc':
-                    return a.name.localeCompare(b.name);
-                case 'score_desc': // Default
-                default:
-                    return b.aura_score - a.aura_score;
-            }
-        }
-
-        // --- Core Data Functions ---
-
-        /**
-         * Fetches data from data.json with a 9-second fail-safe.
-         */
-        async function fetchData() {
-            updateMoverCardsState('loading');
-            tableBody.innerHTML = MAIN_TABLE_SPINNER_HTML; 
-
-            const errorTimeout = setTimeout(() => {
-                // If this timeout fires, the fetch is still running, meaning we display the error.
-                console.error('Data load exceeded 9 seconds timeout. Displaying error.');
-                tableBody.innerHTML = MAIN_TABLE_ERROR_HTML('Timeout: Could not load data.json within 9 seconds.');
-                updateMoverCardsState('error');
-            }, ERROR_TIMEOUT_MS);
-
-            try {
-                // IMPORTANT: The app needs a data.json file in the same directory to function.
-                const response = await fetch(`data.json?v=${new Date().getTime()}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        function sortData(data) {
+            data.sort((a, b) => {
+                const valA = getSortValue(a, sortColumn);
+                const valB = getSortValue(b, sortColumn);
+                
+                let comparison = 0;
+                
+                // For strings (like name), use localeCompare
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    comparison = valA.localeCompare(valB);
+                } else {
+                    // For numbers
+                    if (valA < valB) {
+                        comparison = -1;
+                    } else if (valA > valB) {
+                        comparison = 1;
+                    }
                 }
+
+                // Apply direction
+                return sortDirection === 'desc' ? comparison * -1 : comparison;
+            });
+            return data;
+        }
+
+        // --- Data Fetching and Rendering ---
+
+        async function fetchDataAndRender() {
+            try {
+                // Fetch data, ensuring a unique query to avoid browser cache
+                const response = await fetch(`data.json?v=${new Date().getTime()}`);
                 const data = await response.json();
                 
-                clearTimeout(errorTimeout); // Clear timeout since data was successfully loaded
-
-                // 1. Process Raw Data
-                rawAuraData = data.celebrities.map(celeb => {
-                    const netMovement = celeb.aura_score - celeb.previous_aura_score;
-                    const changePercentage = celeb.previous_aura_score === 0 ? 0 : (netMovement / celeb.previous_aura_score) * 100;
-                    return {
-                        ...celeb,
-                        netMovement,
-                        changePercentage
-                    };
-                });
-                
-                // 2. Update Timestamp
                 document.getElementById('update-time').textContent = data.last_updated;
+                allCelebrities = data.celebrities; // Store the initial data
 
-                // 3. Update Movers Cards
-                updateMoverCardsState('success', rawAuraData);
-
-                // 4. Render Table (Initial Sort by Score Desc)
-                handleSearchAndSort();
-
-            } catch (error) {
-                clearTimeout(errorTimeout); // Clear timeout if fetch failed quickly
-                console.error('CRITICAL: Failed to load Flux - Aura Market data. Ensure data.json file exists and is accessible.', error);
+                renderTable(); // Initial render and sort
                 
-                // Show spinner for a brief moment before showing final error (user preference)
-                setTimeout(() => {
-                    tableBody.innerHTML = MAIN_TABLE_ERROR_HTML(`Failed to load data. Details: ${error.message}. (Is 'data.json' present?)`);
-                    updateMoverCardsState('error');
-                }, 100); 
-            } finally {
-                // searchSpinner is only used by handleSearchAndSort now.
+            } catch (error) {
+                console.error('Error fetching Aura Market data:', error);
             }
         }
 
-        /**
-         * Filters and sorts the data based on user inputs and renders the table.
-         * The search function logic is correct; if it's not working, ensure 'data.json' has loaded successfully.
-         */
-        function handleSearchAndSort() {
-            // Show search spinner briefly
-            searchSpinner.classList.remove('hidden');
+        function renderTable(filterQuery = '') {
+            const tableBody = document.getElementById('aura-data');
+            const filteredData = filterQuery 
+                ? allCelebrities.filter(c => c.name.toLowerCase().includes(filterQuery.toLowerCase()))
+                : allCelebrities;
+            
+            const sortedData = sortData([...filteredData]); // Sort a copy
+            
+            tableBody.innerHTML = ''; // Clear old data
 
-            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
-            const sortCriteria = document.getElementById('sort-select').value;
-
-            // 1. Filtering: Use the globally stored rawAuraData for filtering
-            let filteredData = rawAuraData.filter(celeb => 
-                celeb.name.toLowerCase().includes(searchTerm)
-            );
-
-            // 2. Apply Sorting
-            filteredData.sort((a, b) => {
-                
-                // If there is an active search term, apply relevance sort first
-                if (searchTerm.length > 0) {
-                    const aName = a.name.toLowerCase();
-                    const bName = b.name.toLowerCase();
-
-                    const aStarts = aName.startsWith(searchTerm);
-                    const bStarts = bName.startsWith(searchTerm);
-
-                    // A. Primary Relevance Sort: Prioritize StartsWith matches (Match on Top)
-                    if (aStarts && !bStarts) return -1; // 'a' comes first
-                    if (!aStarts && bStarts) return 1;  // 'b' comes first
+            // Update header class to show current sort state
+            document.querySelectorAll('.aura-table th').forEach(th => {
+                th.classList.remove('sorted');
+                if (th.getAttribute('data-sort-key') === sortColumn) {
+                    th.classList.add('sorted');
                 }
-                
-                // B. Secondary Sort: Apply user-selected sort criteria
-                return applyUserSort(a, b, sortCriteria);
             });
 
-            // 3. Render the filtered and sorted data immediately
-            renderTable(filteredData);
-            searchSpinner.classList.add('hidden');
-        }
 
-        /**
-         * Renders the table body with the given data array.
-         */
-        function renderTable(dataToRender) {
-            if (dataToRender.length === 0 && document.getElementById('search-input').value.length > 0) {
-                // Not Found Message
-                tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-16 text-center text-xl text-gray-500 font-semibold">कोई परिणाम नहीं मिला।</td></tr>`;
-                return;
-            } else if (dataToRender.length === 0) {
-                 // Show general error if data array is empty but no search term (should be covered by fetchData error)
-                 tableBody.innerHTML = MAIN_TABLE_ERROR_HTML('No data found in the file.');
-                 return;
-            }
+            sortedData.forEach(celeb => {
+                const row = document.createElement('tr');
 
-            tableBody.innerHTML = dataToRender.map(celeb => {
-                const { text: movementText, class: movementClass } = formatMovement(celeb.netMovement);
-                const { text: percentText } = formatMovement(celeb.changePercentage);
+                // Calculations
+                const todayChange = celeb.aura_score - celeb.previous_aura_score;
+                const changePercentage = celeb.previous_aura_score === 0 ? 0 : (todayChange / celeb.previous_aura_score) * 100;
+                const changeClass = todayChange >= 0 ? 'positive' : 'negative';
+                const sign = todayChange >= 0 ? '+' : '';
 
-                return `
-                    <tr class="hover:bg-gray-800 transition duration-150 ease-in-out">
-                        <td class="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
-                            ${celeb.name}
-                        </td>
-                        
-                        <td class="numeric px-3 py-3 text-sm text-white">
-                            ${celeb.aura_score.toFixed(2)}
-                        </td>
-                        
-                        <td class="hidden sm:table-cell numeric px-3 py-3 text-sm text-[--color-text-secondary]">
-                            ${celeb.previous_aura_score.toFixed(2)}
-                        </td>
-                        
-                        <td class="numeric px-3 py-3 text-sm ${movementClass}">
-                            ${movementText}
-                        </td>
-                        
-                        <td class="numeric px-3 py-3 text-sm ${movementClass}">
-                            ${percentText}%
-                        </td>
-                    </tr>
+                row.innerHTML = `
+                    <td class="name-cell">${celeb.name}</td>
+                    <td class="aura-score">${celeb.aura_score.toFixed(2)}</td>
+                    <td class="change-values ${changeClass}">${sign}${changePercentage.toFixed(2)}%</td>
+                    <td class="change-values ${changeClass}">${sign}${todayChange.toFixed(2)}</td>
+                    <td>${celeb.previous_aura_score.toFixed(2)}</td>
                 `;
-            }).join('');
+                tableBody.appendChild(row);
+            });
         }
+        
+        // --- Event Listeners and Initialization ---
 
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDataAndRender();
+            attachSortingListeners();
+            attachIconListeners();
+            attachSearchListener();
+        });
+        
+        function attachSortingListeners() {
+            document.querySelectorAll('.aura-table th').forEach(header => {
+                const key = header.getAttribute('data-sort-key');
+                if (key) {
+                    header.addEventListener('click', () => {
+                        // Toggle direction or change column
+                        if (sortColumn === key) {
+                            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            sortColumn = key;
+                            // Default direction for Name is ASC, others DESC
+                            sortDirection = key === 'name' ? 'asc' : 'desc';
+                        }
+                        renderTable(document.getElementById('search-input').value);
+                    });
+                }
+            });
+        }
+        
+        function attachIconListeners() {
+            // 1. Search Icon Toggle
+            const searchIcon = document.getElementById('search-icon');
+            const searchContainer = document.getElementById('search-input-container');
+            searchIcon.addEventListener('click', () => {
+                searchContainer.style.display = searchContainer.style.display === 'block' ? 'none' : 'block';
+                if (searchContainer.style.display === 'block') {
+                    document.getElementById('search-input').focus();
+                } else {
+                    document.getElementById('search-input').value = '';
+                    renderTable(''); // Clear filter when hiding search
+                }
+            });
+            
+            // 2. Info Icon Modal
+            const infoIcon = document.getElementById('info-icon');
+            const infoModal = document.getElementById('info-modal-overlay');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            
+            infoIcon.addEventListener('click', () => {
+                infoModal.style.display = 'flex';
+            });
+            
+            modalCloseButton.addEventListener('click', () => {
+                infoModal.style.display = 'none';
+            });
+            
+            infoModal.addEventListener('click', (e) => {
+                // Close when clicking outside the modal content
+                if (e.target === infoModal) {
+                    infoModal.style.display = 'none';
+                }
+            });
+            
+            // 3. Telegram Link: handled by the <a> tag in HTML
+        }
+        
+        function attachSearchListener() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                renderTable(e.target.value.trim());
+            });
+        }
     </script>
 </body>
 </html>
