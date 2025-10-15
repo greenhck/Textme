@@ -300,6 +300,25 @@
                  updateMoverCardsState('error');
             }
         }
+        
+        /**
+         * Standard sorting logic based on the user's selection.
+         */
+        function applyUserSort(a, b, sortCriteria) {
+            switch (sortCriteria) {
+                case 'score_asc':
+                    return a.aura_score - b.aura_score;
+                case 'change_desc':
+                    return b.netMovement - a.netMovement;
+                case 'change_asc':
+                    return a.netMovement - b.netMovement;
+                case 'name_asc':
+                    return a.name.localeCompare(b.name);
+                case 'score_desc': // Default
+                default:
+                    return b.aura_score - a.aura_score;
+            }
+        }
 
         // --- Core Data Functions ---
 
@@ -369,32 +388,35 @@
             // Show search spinner briefly
             searchSpinner.classList.remove('hidden');
 
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
             const sortCriteria = document.getElementById('sort-select').value;
 
-            // Use the globally stored rawAuraData for filtering
+            // 1. Filtering: Use the globally stored rawAuraData for filtering
             let filteredData = rawAuraData.filter(celeb => 
                 celeb.name.toLowerCase().includes(searchTerm)
             );
 
-            // 1. Apply Sorting
+            // 2. Apply Sorting
             filteredData.sort((a, b) => {
-                switch (sortCriteria) {
-                    case 'score_asc':
-                        return a.aura_score - b.aura_score;
-                    case 'change_desc':
-                        return b.netMovement - a.netMovement;
-                    case 'change_asc':
-                        return a.netMovement - b.netMovement;
-                    case 'name_asc':
-                        return a.name.localeCompare(b.name);
-                    case 'score_desc': // Default
-                    default:
-                        return b.aura_score - a.aura_score;
+                
+                // If there is an active search term, apply relevance sort first
+                if (searchTerm.length > 0) {
+                    const aName = a.name.toLowerCase();
+                    const bName = b.name.toLowerCase();
+
+                    const aStarts = aName.startsWith(searchTerm);
+                    const bStarts = bName.startsWith(searchTerm);
+
+                    // A. Primary Relevance Sort: Prioritize StartsWith matches (Match on Top)
+                    if (aStarts && !bStarts) return -1; // 'a' comes first
+                    if (!aStarts && bStarts) return 1;  // 'b' comes first
                 }
+                
+                // B. Secondary Sort: Apply user-selected sort criteria
+                return applyUserSort(a, b, sortCriteria);
             });
 
-            // 2. Render the filtered and sorted data immediately (removed setTimeout for responsiveness)
+            // 3. Render the filtered and sorted data immediately
             renderTable(filteredData);
             searchSpinner.classList.add('hidden');
         }
@@ -404,8 +426,8 @@
          */
         function renderTable(dataToRender) {
             if (dataToRender.length === 0 && document.getElementById('search-input').value.length > 0) {
-                // FIX: Increased vertical padding (py-12) and slightly larger, bolder text to prevent table collapse
-                tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-12 text-center text-lg text-gray-500 font-semibold">कोई परिणाम नहीं मिला।</td></tr>`;
+                // FIX: Increased vertical padding (py-16) and text size (text-xl) for better prominence
+                tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-16 text-center text-xl text-gray-500 font-semibold">कोई परिणाम नहीं मिला।</td></tr>`;
                 return;
             } else if (dataToRender.length === 0) {
                  // Show general error if data array is empty but no search term (should be covered by fetchData error)
@@ -419,27 +441,27 @@
 
                 return `
                     <tr class="hover:bg-gray-800 transition duration-150 ease-in-out">
-                        <!-- Column 1: Name -->
+                        <!-- Column 1: Name (Left Aligned) -->
                         <td class="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-white sm:pl-6">
                             ${celeb.name}
                         </td>
                         
-                        <!-- Column 2: Aura Score (Current Score) -->
+                        <!-- Column 2: Aura Score (Right Aligned) -->
                         <td class="numeric px-3 py-3 text-sm text-white">
                             ${celeb.aura_score.toFixed(2)}
                         </td>
                         
-                        <!-- Column 3: Previous Day's AS -->
+                        <!-- Column 3: Previous Day's AS (Right Aligned) -->
                         <td class="hidden sm:table-cell numeric px-3 py-3 text-sm text-[--color-text-secondary]">
                             ${celeb.previous_aura_score.toFixed(2)}
                         </td>
                         
-                        <!-- Column 4: Net Movement (Today's Change) -->
+                        <!-- Column 4: Net Movement (Right Aligned) -->
                         <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${movementText}
                         </td>
                         
-                        <!-- Column 5: Daily % Chg -->
+                        <!-- Column 5: Daily % Chg (Right Aligned) -->
                         <td class="numeric px-3 py-3 text-sm ${movementClass}">
                             ${percentText}%
                         </td>
