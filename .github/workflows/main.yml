@@ -2,7 +2,7 @@ name: Aura Market Daily Update
 
 on:
   schedule:
-    - cron: '54 06 * * *' # Runs daily at 06:54 UTC (12:24 PM IST)
+    - cron: '50 06 * * *' # Runs daily at 06:54 UTC (12:24 PM IST)
   workflow_dispatch:
 
 jobs:
