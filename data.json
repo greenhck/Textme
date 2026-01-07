@@ -1,5 +1,5 @@
 {
-    "last_updated": "06-01-2026 12:33:41 IST",
+    "last_updated": "07-01-2026 12:32:32 IST",
     "celebrities": [
         {
             "name": "Ratan Tata",
@@ -17,7 +17,7 @@
         },
         {
             "name": "M.S. Dhoni",
-            "aura_score": 1829.85,
+            "aura_score": 1830.85,
             "previous_aura_score": 1829.85,
             "trend_7_days": [
                 1829.85,
@@ -26,12 +26,12 @@
                 1829.85,
                 1829.85,
                 1829.85,
-                1829.85
+                1830.85
             ]
         },
         {
             "name": "Virat Kohli",
-            "aura_score": 1805.05,
+            "aura_score": 1807.05,
             "previous_aura_score": 1805.05,
             "trend_7_days": [
                 1805.05,
@@ -40,7 +40,7 @@
                 1805.05,
                 1805.05,
                 1805.05,
-                1805.05
+                1807.05
             ]
         },
         {
@@ -129,7 +129,7 @@
         },
         {
             "name": "Rohit Sharma",
-            "aura_score": 1405.1,
+            "aura_score": 1406.1,
             "previous_aura_score": 1405.1,
             "trend_7_days": [
                 1405.1,
@@ -138,7 +138,7 @@
                 1405.1,
                 1405.1,
                 1405.1,
-                1405.1
+                1406.1
             ]
         },
         {
@@ -227,7 +227,7 @@
         },
         {
             "name": "Anand Mahindra",
-            "aura_score": 1132.45,
+            "aura_score": 1133.45,
             "previous_aura_score": 1132.45,
             "trend_7_days": [
                 1132.45,
@@ -236,7 +236,7 @@
                 1132.45,
                 1132.45,
                 1132.45,
-                1132.45
+                1133.45
             ]
         },
         {
@@ -283,7 +283,7 @@
         },
         {
             "name": "Shubman Gill",
-            "aura_score": 1004.33,
+            "aura_score": 1005.33,
             "previous_aura_score": 1004.33,
             "trend_7_days": [
                 1004.33,
@@ -292,7 +292,7 @@
                 1004.33,
                 1004.33,
                 1004.33,
-                1004.33
+                1005.33
             ]
         },
         {
@@ -311,7 +311,7 @@
         },
         {
             "name": "Jasprit Bumrah",
-            "aura_score": 933.3,
+            "aura_score": 934.3,
             "previous_aura_score": 933.3,
             "trend_7_days": [
                 933.3,
@@ -320,7 +320,7 @@
                 933.3,
                 933.3,
                 933.3,
-                933.3
+                934.3
             ]
         },
         {
