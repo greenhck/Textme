@@ -1,12 +1,12 @@
 {
-    "last_updated": "19-02-2026 13:08:46 IST",
+    "last_updated": "20-02-2026 13:07:29 IST",
     "celebrities": [
         {
             "name": "Ratan Tata",
             "aura_score": 1991.35,
             "previous_aura_score": 1991.35,
             "trend_7_days": [
-                1990.85,
+                1991.35,
                 1991.35,
                 1991.35,
                 1991.35,
@@ -17,44 +17,44 @@
         },
         {
             "name": "M.S. Dhoni",
-            "aura_score": 1836.3,
+            "aura_score": 1837.3,
             "previous_aura_score": 1836.3,
             "trend_7_days": [
-                1836.1,
                 1836.3,
                 1836.3,
                 1836.3,
                 1836.3,
                 1836.3,
-                1836.3
+                1836.3,
+                1837.3
             ]
         },
         {
             "name": "Virat Kohli",
-            "aura_score": 1819.5,
+            "aura_score": 1820.5,
             "previous_aura_score": 1819.5,
             "trend_7_days": [
-                1818.2,
                 1818.5,
                 1819.5,
                 1819.5,
                 1819.5,
                 1819.5,
-                1819.5
+                1819.5,
+                1820.5
             ]
         },
         {
             "name": "Shah Rukh Khan",
-            "aura_score": 1704.15,
+            "aura_score": 1705.15,
             "previous_aura_score": 1704.15,
             "trend_7_days": [
-                1702.75,
                 1703.15,
                 1704.15,
                 1704.15,
                 1704.15,
                 1704.15,
-                1704.15
+                1704.15,
+                1705.15
             ]
         },
         {
@@ -62,7 +62,7 @@
             "aura_score": 1624.02,
             "previous_aura_score": 1624.02,
             "trend_7_days": [
-                1623.92,
+                1624.02,
                 1624.02,
                 1624.02,
                 1624.02,
@@ -76,7 +76,7 @@
             "aura_score": 1588.83,
             "previous_aura_score": 1588.83,
             "trend_7_days": [
-                1588.63,
+                1588.83,
                 1588.83,
                 1588.83,
                 1588.83,
@@ -90,7 +90,7 @@
             "aura_score": 1554.22,
             "previous_aura_score": 1554.22,
             "trend_7_days": [
-                1553.92,
+                1554.22,
                 1554.22,
                 1554.22,
                 1554.22,
@@ -104,7 +104,7 @@
             "aura_score": 1491.2,
             "previous_aura_score": 1491.2,
             "trend_7_days": [
-                1491.1,
+                1491.2,
                 1491.2,
                 1491.2,
                 1491.2,
@@ -118,7 +118,7 @@
             "aura_score": 1466.08,
             "previous_aura_score": 1466.08,
             "trend_7_days": [
-                1465.48,
+                1466.08,
                 1466.08,
                 1466.08,
                 1466.08,
@@ -129,16 +129,16 @@
         },
         {
             "name": "Rohit Sharma",
-            "aura_score": 1413.1,
+            "aura_score": 1414.1,
             "previous_aura_score": 1413.1,
             "trend_7_days": [
-                1412.9,
                 1413.1,
                 1413.1,
                 1413.1,
                 1413.1,
                 1413.1,
-                1413.1
+                1413.1,
+                1414.1
             ]
         },
         {
@@ -146,7 +146,7 @@
             "aura_score": 1354.85,
             "previous_aura_score": 1354.85,
             "trend_7_days": [
-                1354.55,
+                1354.85,
                 1354.85,
                 1354.85,
                 1354.85,
@@ -160,7 +160,7 @@
             "aura_score": 1311.2,
             "previous_aura_score": 1311.2,
             "trend_7_days": [
-                1311.1,
+                1311.2,
                 1311.2,
                 1311.2,
                 1311.2,
@@ -174,7 +174,7 @@
             "aura_score": 1253.18,
             "previous_aura_score": 1253.18,
             "trend_7_days": [
-                1252.98,
+                1253.18,
                 1253.18,
                 1253.18,
                 1253.18,
@@ -188,7 +188,7 @@
             "aura_score": 1227.15,
             "previous_aura_score": 1227.15,
             "trend_7_days": [
-                1226.75,
+                1227.15,
                 1227.15,
                 1227.15,
                 1227.15,
@@ -202,7 +202,7 @@
             "aura_score": 1187.3,
             "previous_aura_score": 1187.3,
             "trend_7_days": [
-                1186.8,
+                1187.3,
                 1187.3,
                 1187.3,
                 1187.3,
@@ -216,7 +216,7 @@
             "aura_score": 1153.85,
             "previous_aura_score": 1153.85,
             "trend_7_days": [
-                1153.55,
+                1153.85,
                 1153.85,
                 1153.85,
                 1153.85,
@@ -230,8 +230,8 @@
             "aura_score": 1142.4,
             "previous_aura_score": 1142.4,
             "trend_7_days": [
-                1140.9,
                 1141.4,
+                1142.4,
                 1142.4,
                 1142.4,
                 1142.4,
@@ -244,7 +244,7 @@
             "aura_score": 1095.1,
             "previous_aura_score": 1095.1,
             "trend_7_days": [
-                1094.7,
+                1095.1,
                 1095.1,
                 1095.1,
                 1095.1,
@@ -258,7 +258,7 @@
             "aura_score": 1062.92,
             "previous_aura_score": 1062.92,
             "trend_7_days": [
-                1062.42,
+                1062.92,
                 1062.92,
                 1062.92,
                 1062.92,
@@ -272,7 +272,7 @@
             "aura_score": 1025.2,
             "previous_aura_score": 1025.2,
             "trend_7_days": [
-                1024.8,
+                1025.2,
                 1025.2,
                 1025.2,
                 1025.2,
@@ -283,16 +283,16 @@
         },
         {
             "name": "Shubman Gill",
-            "aura_score": 1016.98,
+            "aura_score": 1017.98,
             "previous_aura_score": 1016.98,
             "trend_7_days": [
-                1015.68,
                 1015.98,
                 1016.98,
                 1016.98,
                 1016.98,
                 1016.98,
-                1016.98
+                1016.98,
+                1017.98
             ]
         },
         {
@@ -300,7 +300,7 @@
             "aura_score": 968.5,
             "previous_aura_score": 968.5,
             "trend_7_days": [
-                968.0,
+                968.5,
                 968.5,
                 968.5,
                 968.5,
@@ -314,7 +314,7 @@
             "aura_score": 940.3,
             "previous_aura_score": 940.3,
             "trend_7_days": [
-                940.1,
+                940.3,
                 940.3,
                 940.3,
                 940.3,
@@ -328,8 +328,8 @@
             "aura_score": 917.67,
             "previous_aura_score": 917.67,
             "trend_7_days": [
-                916.27,
                 916.67,
+                917.67,
                 917.67,
                 917.67,
                 917.67,
@@ -342,7 +342,7 @@
             "aura_score": 872.05,
             "previous_aura_score": 872.05,
             "trend_7_days": [
-                871.95,
+                872.05,
                 872.05,
                 872.05,
                 872.05,
@@ -356,7 +356,7 @@
             "aura_score": 849.95,
             "previous_aura_score": 849.95,
             "trend_7_days": [
-                849.65,
+                849.95,
                 849.95,
                 849.95,
                 849.95,
@@ -370,8 +370,8 @@
             "aura_score": 830.0,
             "previous_aura_score": 830.0,
             "trend_7_days": [
-                828.4,
                 829.0,
+                830.0,
                 830.0,
                 830.0,
                 830.0,
@@ -384,7 +384,7 @@
             "aura_score": 791.85,
             "previous_aura_score": 791.85,
             "trend_7_days": [
-                791.75,
+                791.85,
                 791.85,
                 791.85,
                 791.85,
@@ -398,7 +398,7 @@
             "aura_score": 766.32,
             "previous_aura_score": 766.32,
             "trend_7_days": [
-                766.22,
+                766.32,
                 766.32,
                 766.32,
                 766.32,
@@ -412,7 +412,7 @@
             "aura_score": 747.88,
             "previous_aura_score": 747.88,
             "trend_7_days": [
-                747.38,
+                747.88,
                 747.88,
                 747.88,
                 747.88,
@@ -426,7 +426,7 @@
             "aura_score": 722.1,
             "previous_aura_score": 722.1,
             "trend_7_days": [
-                721.7,
+                722.1,
                 722.1,
                 722.1,
                 722.1,
@@ -440,7 +440,7 @@
             "aura_score": 696.8,
             "previous_aura_score": 696.8,
             "trend_7_days": [
-                696.4,
+                696.8,
                 696.8,
                 696.8,
                 696.8,
@@ -454,7 +454,7 @@
             "aura_score": 671.6,
             "previous_aura_score": 671.6,
             "trend_7_days": [
-                671.3,
+                671.6,
                 671.6,
                 671.6,
                 671.6,
@@ -468,7 +468,7 @@
             "aura_score": 646.2,
             "previous_aura_score": 646.2,
             "trend_7_days": [
-                645.8,
+                646.2,
                 646.2,
                 646.2,
                 646.2,
@@ -482,7 +482,7 @@
             "aura_score": 616.25,
             "previous_aura_score": 616.25,
             "trend_7_days": [
-                616.05,
+                616.25,
                 616.25,
                 616.25,
                 616.25,
@@ -496,7 +496,7 @@
             "aura_score": 590.47,
             "previous_aura_score": 590.47,
             "trend_7_days": [
-                590.27,
+                590.47,
                 590.47,
                 590.47,
                 590.47,
@@ -510,7 +510,7 @@
             "aura_score": 574.7,
             "previous_aura_score": 574.7,
             "trend_7_days": [
-                574.5,
+                574.7,
                 574.7,
                 574.7,
                 574.7,
@@ -524,8 +524,8 @@
             "aura_score": 549.25,
             "previous_aura_score": 549.25,
             "trend_7_days": [
-                547.95,
                 548.25,
+                549.25,
                 549.25,
                 549.25,
                 549.25,
@@ -538,8 +538,8 @@
             "aura_score": 520.2,
             "previous_aura_score": 520.2,
             "trend_7_days": [
-                519.1,
                 519.2,
+                520.2,
                 520.2,
                 520.2,
                 520.2,
@@ -552,7 +552,7 @@
             "aura_score": 495.75,
             "previous_aura_score": 495.75,
             "trend_7_days": [
-                495.45,
+                495.75,
                 495.75,
                 495.75,
                 495.75,
@@ -566,7 +566,7 @@
             "aura_score": 469.72,
             "previous_aura_score": 469.72,
             "trend_7_days": [
-                469.42,
+                469.72,
                 469.72,
                 469.72,
                 469.72,
@@ -580,7 +580,7 @@
             "aura_score": 444.4,
             "previous_aura_score": 444.4,
             "trend_7_days": [
-                444.2,
+                444.4,
                 444.4,
                 444.4,
                 444.4,
@@ -594,7 +594,7 @@
             "aura_score": 418.3,
             "previous_aura_score": 418.3,
             "trend_7_days": [
-                418.0,
+                418.3,
                 418.3,
                 418.3,
                 418.3,
@@ -608,7 +608,7 @@
             "aura_score": 397.45,
             "previous_aura_score": 397.45,
             "trend_7_days": [
-                396.95,
+                397.45,
                 397.45,
                 397.45,
                 397.45,
@@ -622,7 +622,7 @@
             "aura_score": 368.23,
             "previous_aura_score": 368.23,
             "trend_7_days": [
-                368.03,
+                368.23,
                 368.23,
                 368.23,
                 368.23,
@@ -636,7 +636,7 @@
             "aura_score": 343.55,
             "previous_aura_score": 343.55,
             "trend_7_days": [
-                343.35,
+                343.55,
                 343.55,
                 343.55,
                 343.55,
@@ -650,7 +650,7 @@
             "aura_score": 321.6,
             "previous_aura_score": 321.6,
             "trend_7_days": [
-                321.1,
+                321.6,
                 321.6,
                 321.6,
                 321.6,
@@ -664,7 +664,7 @@
             "aura_score": 293.9,
             "previous_aura_score": 293.9,
             "trend_7_days": [
-                293.6,
+                293.9,
                 293.9,
                 293.9,
                 293.9,
@@ -678,7 +678,7 @@
             "aura_score": 268.95,
             "previous_aura_score": 268.95,
             "trend_7_days": [
-                268.65,
+                268.95,
                 268.95,
                 268.95,
                 268.95,
@@ -692,7 +692,7 @@
             "aura_score": 243.8,
             "previous_aura_score": 243.8,
             "trend_7_days": [
-                243.5,
+                243.8,
                 243.8,
                 243.8,
                 243.8,
