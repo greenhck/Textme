@@ -1,5 +1,5 @@
 {
-    "last_updated": "20-02-2026 13:07:29 IST",
+    "last_updated": "21-02-2026 12:50:28 IST",
     "celebrities": [
         {
             "name": "Ratan Tata",
@@ -18,42 +18,42 @@
         {
             "name": "M.S. Dhoni",
             "aura_score": 1837.3,
-            "previous_aura_score": 1836.3,
+            "previous_aura_score": 1837.3,
             "trend_7_days": [
                 1836.3,
                 1836.3,
                 1836.3,
                 1836.3,
                 1836.3,
-                1836.3,
+                1837.3,
                 1837.3
             ]
         },
         {
             "name": "Virat Kohli",
             "aura_score": 1820.5,
-            "previous_aura_score": 1819.5,
+            "previous_aura_score": 1820.5,
             "trend_7_days": [
-                1818.5,
                 1819.5,
                 1819.5,
                 1819.5,
                 1819.5,
                 1819.5,
+                1820.5,
                 1820.5
             ]
         },
         {
             "name": "Shah Rukh Khan",
             "aura_score": 1705.15,
-            "previous_aura_score": 1704.15,
+            "previous_aura_score": 1705.15,
             "trend_7_days": [
-                1703.15,
                 1704.15,
                 1704.15,
                 1704.15,
                 1704.15,
                 1704.15,
+                1705.15,
                 1705.15
             ]
         },
@@ -130,14 +130,14 @@
         {
             "name": "Rohit Sharma",
             "aura_score": 1414.1,
-            "previous_aura_score": 1413.1,
+            "previous_aura_score": 1414.1,
             "trend_7_days": [
                 1413.1,
                 1413.1,
                 1413.1,
                 1413.1,
                 1413.1,
-                1413.1,
+                1414.1,
                 1414.1
             ]
         },
@@ -230,7 +230,7 @@
             "aura_score": 1142.4,
             "previous_aura_score": 1142.4,
             "trend_7_days": [
-                1141.4,
+                1142.4,
                 1142.4,
                 1142.4,
                 1142.4,
@@ -284,14 +284,14 @@
         {
             "name": "Shubman Gill",
             "aura_score": 1017.98,
-            "previous_aura_score": 1016.98,
+            "previous_aura_score": 1017.98,
             "trend_7_days": [
-                1015.98,
                 1016.98,
                 1016.98,
                 1016.98,
                 1016.98,
                 1016.98,
+                1017.98,
                 1017.98
             ]
         },
@@ -328,7 +328,7 @@
             "aura_score": 917.67,
             "previous_aura_score": 917.67,
             "trend_7_days": [
-                916.67,
+                917.67,
                 917.67,
                 917.67,
                 917.67,
@@ -370,7 +370,7 @@
             "aura_score": 830.0,
             "previous_aura_score": 830.0,
             "trend_7_days": [
-                829.0,
+                830.0,
                 830.0,
                 830.0,
                 830.0,
@@ -524,7 +524,7 @@
             "aura_score": 549.25,
             "previous_aura_score": 549.25,
             "trend_7_days": [
-                548.25,
+                549.25,
                 549.25,
                 549.25,
                 549.25,
@@ -538,7 +538,7 @@
             "aura_score": 520.2,
             "previous_aura_score": 520.2,
             "trend_7_days": [
-                519.2,
+                520.2,
                 520.2,
                 520.2,
                 520.2,
