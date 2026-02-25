@@ -1,17 +1,17 @@
 {
-    "last_updated": "24-02-2026 13:09:30 IST",
+    "last_updated": "25-02-2026 13:09:30 IST",
     "celebrities": [
         {
             "name": "Ratan Tata",
             "aura_score": 1993.35,
-            "previous_aura_score": 1992.35,
+            "previous_aura_score": 1993.35,
             "trend_7_days": [
                 1991.35,
                 1991.35,
                 1991.35,
                 1991.35,
-                1991.35,
                 1992.35,
+                1993.35,
                 1993.35
             ]
         },
@@ -21,7 +21,7 @@
             "previous_aura_score": 1837.3,
             "trend_7_days": [
                 1836.3,
-                1836.3,
+                1837.3,
                 1837.3,
                 1837.3,
                 1837.3,
@@ -32,14 +32,14 @@
         {
             "name": "Virat Kohli",
             "aura_score": 1821.5,
-            "previous_aura_score": 1820.5,
+            "previous_aura_score": 1821.5,
             "trend_7_days": [
                 1819.5,
-                1819.5,
                 1820.5,
                 1820.5,
                 1820.5,
                 1820.5,
+                1821.5,
                 1821.5
             ]
         },
@@ -49,7 +49,7 @@
             "previous_aura_score": 1705.15,
             "trend_7_days": [
                 1704.15,
-                1704.15,
+                1705.15,
                 1705.15,
                 1705.15,
                 1705.15,
@@ -133,7 +133,7 @@
             "previous_aura_score": 1414.1,
             "trend_7_days": [
                 1413.1,
-                1413.1,
+                1414.1,
                 1414.1,
                 1414.1,
                 1414.1,
@@ -228,14 +228,14 @@
         {
             "name": "Anand Mahindra",
             "aura_score": 1143.4,
-            "previous_aura_score": 1142.4,
+            "previous_aura_score": 1143.4,
             "trend_7_days": [
                 1142.4,
                 1142.4,
                 1142.4,
                 1142.4,
                 1142.4,
-                1142.4,
+                1143.4,
                 1143.4
             ]
         },
@@ -284,14 +284,14 @@
         {
             "name": "Shubman Gill",
             "aura_score": 1018.98,
-            "previous_aura_score": 1017.98,
+            "previous_aura_score": 1018.98,
             "trend_7_days": [
                 1016.98,
-                1016.98,
                 1017.98,
                 1017.98,
                 1017.98,
                 1017.98,
+                1018.98,
                 1018.98
             ]
         },
@@ -368,14 +368,14 @@
         {
             "name": "Narayana Murthy",
             "aura_score": 831.0,
-            "previous_aura_score": 830.0,
+            "previous_aura_score": 831.0,
             "trend_7_days": [
                 830.0,
                 830.0,
                 830.0,
                 830.0,
                 830.0,
-                830.0,
+                831.0,
                 831.0
             ]
         },
