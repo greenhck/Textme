@@ -1,121 +1,121 @@
 {
-    "last_updated": "21-03-2026 12:52:11 IST",
+    "last_updated": "22-03-2026 12:58:04 IST",
     "celebrities": [
         {
             "name": "Ratan Tata",
-            "aura_score": 1996.5,
+            "aura_score": 1997.0,
             "previous_aura_score": 1996.5,
             "trend_7_days": [
                 1996.0,
                 1996.0,
                 1996.0,
                 1996.0,
-                1996.0,
                 1996.5,
-                1996.5
+                1996.5,
+                1997.0
             ]
         },
         {
             "name": "M.S. Dhoni",
-            "aura_score": 1841.35,
+            "aura_score": 1841.55,
             "previous_aura_score": 1841.35,
             "trend_7_days": [
                 1841.15,
                 1841.15,
                 1841.15,
                 1841.15,
-                1841.15,
                 1841.35,
-                1841.35
+                1841.35,
+                1841.55
             ]
         },
         {
             "name": "Virat Kohli",
-            "aura_score": 1826.7,
+            "aura_score": 1826.8,
             "previous_aura_score": 1826.7,
             "trend_7_days": [
                 1826.4,
                 1826.4,
                 1826.4,
                 1826.4,
-                1826.4,
                 1826.7,
-                1826.7
+                1826.7,
+                1826.8
             ]
         },
         {
             "name": "Shah Rukh Khan",
-            "aura_score": 1708.25,
+            "aura_score": 1708.55,
             "previous_aura_score": 1708.25,
             "trend_7_days": [
                 1708.15,
                 1708.15,
                 1708.15,
                 1708.15,
-                1708.15,
                 1708.25,
-                1708.25
+                1708.25,
+                1708.55
             ]
         },
         {
             "name": "Mukesh Ambani",
-            "aura_score": 1624.45,
+            "aura_score": 1624.55,
             "previous_aura_score": 1624.45,
             "trend_7_days": [
                 1624.55,
                 1624.55,
                 1624.55,
                 1624.55,
-                1624.55,
                 1624.45,
-                1624.45
+                1624.45,
+                1624.55
             ]
         },
         {
             "name": "Sachin Tendulkar",
-            "aura_score": 1590.56,
+            "aura_score": 1590.66,
             "previous_aura_score": 1590.56,
             "trend_7_days": [
                 1590.46,
                 1590.46,
                 1590.46,
                 1590.46,
-                1590.46,
                 1590.56,
-                1590.56
+                1590.56,
+                1590.66
             ]
         },
         {
             "name": "Amitabh Bachchan",
-            "aura_score": 1555.94,
+            "aura_score": 1556.04,
             "previous_aura_score": 1555.94,
             "trend_7_days": [
                 1555.84,
                 1555.84,
                 1555.84,
                 1555.84,
-                1555.84,
                 1555.94,
-                1555.94
+                1555.94,
+                1556.04
             ]
         },
         {
             "name": "Gautam Adani",
-            "aura_score": 1488.91,
+            "aura_score": 1488.71,
             "previous_aura_score": 1488.91,
             "trend_7_days": [
                 1489.31,
                 1489.31,
                 1489.31,
                 1489.31,
-                1489.31,
                 1488.91,
-                1488.91
+                1488.91,
+                1488.71
             ]
         },
         {
             "name": "Rajinikanth",
-            "aura_score": 1469.76,
+            "aura_score": 1470.16,
             "previous_aura_score": 1469.76,
             "trend_7_days": [
                 1469.76,
@@ -124,26 +124,26 @@
                 1469.76,
                 1469.76,
                 1469.76,
-                1469.76
+                1470.16
             ]
         },
         {
             "name": "Rohit Sharma",
-            "aura_score": 1417.41,
+            "aura_score": 1417.51,
             "previous_aura_score": 1417.41,
             "trend_7_days": [
                 1417.21,
                 1417.21,
                 1417.21,
                 1417.21,
-                1417.21,
                 1417.41,
-                1417.41
+                1417.41,
+                1417.51
             ]
         },
         {
             "name": "Salman Khan",
-            "aura_score": 1355.93,
+            "aura_score": 1356.03,
             "previous_aura_score": 1355.93,
             "trend_7_days": [
                 1355.93,
@@ -152,7 +152,7 @@
                 1355.93,
                 1355.93,
                 1355.93,
-                1355.93
+                1356.03
             ]
         },
         {
@@ -178,28 +178,28 @@
                 1254.02,
                 1254.02,
                 1254.02,
-                1254.02,
+                1253.92,
                 1253.92,
                 1253.92
             ]
         },
         {
             "name": "Hrithik Roshan",
-            "aura_score": 1229.09,
+            "aura_score": 1229.29,
             "previous_aura_score": 1229.09,
             "trend_7_days": [
                 1228.99,
                 1228.99,
                 1228.99,
                 1228.99,
-                1228.99,
                 1229.09,
-                1229.09
+                1229.09,
+                1229.29
             ]
         },
         {
             "name": "Prabhas",
-            "aura_score": 1189.52,
+            "aura_score": 1189.82,
             "previous_aura_score": 1189.52,
             "trend_7_days": [
                 1189.52,
@@ -208,12 +208,12 @@
                 1189.52,
                 1189.52,
                 1189.52,
-                1189.52
+                1189.82
             ]
         },
         {
             "name": "Ajay Devgn",
-            "aura_score": 1155.11,
+            "aura_score": 1155.21,
             "previous_aura_score": 1155.11,
             "trend_7_days": [
                 1155.11,
@@ -222,54 +222,54 @@
                 1155.11,
                 1155.11,
                 1155.11,
-                1155.11
+                1155.21
             ]
         },
         {
             "name": "Anand Mahindra",
-            "aura_score": 1146.86,
+            "aura_score": 1147.16,
             "previous_aura_score": 1146.86,
             "trend_7_days": [
                 1146.56,
                 1146.56,
                 1146.56,
                 1146.56,
-                1146.56,
                 1146.86,
-                1146.86
+                1146.86,
+                1147.16
             ]
         },
         {
             "name": "Ranbir Kapoor",
-            "aura_score": 1096.99,
+            "aura_score": 1097.09,
             "previous_aura_score": 1096.99,
             "trend_7_days": [
                 1096.89,
                 1096.89,
                 1096.89,
                 1096.89,
-                1096.89,
                 1096.99,
-                1096.99
+                1096.99,
+                1097.09
             ]
         },
         {
             "name": "Yash",
-            "aura_score": 1065.49,
+            "aura_score": 1065.69,
             "previous_aura_score": 1065.49,
             "trend_7_days": [
                 1065.39,
                 1065.39,
                 1065.39,
                 1065.39,
-                1065.39,
                 1065.49,
-                1065.49
+                1065.49,
+                1065.69
             ]
         },
         {
             "name": "Ranveer Singh",
-            "aura_score": 1026.61,
+            "aura_score": 1026.71,
             "previous_aura_score": 1026.61,
             "trend_7_days": [
                 1026.61,
@@ -278,26 +278,26 @@
                 1026.61,
                 1026.61,
                 1026.61,
-                1026.61
+                1026.71
             ]
         },
         {
             "name": "Shubman Gill",
-            "aura_score": 1023.83,
+            "aura_score": 1024.03,
             "previous_aura_score": 1023.83,
             "trend_7_days": [
                 1023.63,
                 1023.63,
                 1023.63,
                 1023.63,
-                1023.63,
                 1023.83,
-                1023.83
+                1023.83,
+                1024.03
             ]
         },
         {
             "name": "Allu Arjun",
-            "aura_score": 971.08,
+            "aura_score": 971.38,
             "previous_aura_score": 971.08,
             "trend_7_days": [
                 971.08,
@@ -306,82 +306,82 @@
                 971.08,
                 971.08,
                 971.08,
-                971.08
+                971.38
             ]
         },
         {
             "name": "Jasprit Bumrah",
-            "aura_score": 943.39,
+            "aura_score": 943.49,
             "previous_aura_score": 943.39,
             "trend_7_days": [
                 943.19,
                 943.19,
                 943.19,
                 943.19,
-                943.19,
                 943.39,
-                943.39
+                943.39,
+                943.49
             ]
         },
         {
             "name": "Neeraj Chopra",
-            "aura_score": 921.51,
+            "aura_score": 921.71,
             "previous_aura_score": 921.51,
             "trend_7_days": [
                 921.21,
                 921.21,
                 921.21,
                 921.21,
-                921.21,
                 921.51,
-                921.51
+                921.51,
+                921.71
             ]
         },
         {
             "name": "Gautam Gambhir",
-            "aura_score": 872.87,
+            "aura_score": 872.97,
             "previous_aura_score": 872.87,
             "trend_7_days": [
                 872.77,
                 872.77,
                 872.77,
                 872.77,
-                872.77,
                 872.87,
-                872.87
+                872.87,
+                872.97
             ]
         },
         {
             "name": "Kartik Aaryan",
-            "aura_score": 851.78,
+            "aura_score": 851.88,
             "previous_aura_score": 851.78,
             "trend_7_days": [
                 851.68,
                 851.68,
                 851.68,
                 851.68,
-                851.68,
                 851.78,
-                851.78
+                851.78,
+                851.88
             ]
         },
         {
             "name": "Narayana Murthy",
-            "aura_score": 835.67,
+            "aura_score": 836.17,
             "previous_aura_score": 835.67,
             "trend_7_days": [
                 835.17,
                 835.17,
                 835.17,
                 835.17,
-                835.17,
                 835.67,
-                835.67
+                835.67,
+                836.17
             ]
         },
         {
             "name": "Sunil Mittal",
-            "aura_score": 792.59,
+            "aura_score": 792.69,
             "previous_aura_score": 792.59,
             "trend_7_days": [
                 792.59,
@@ -390,91 +390,91 @@
                 792.59,
                 792.59,
                 792.59,
-                792.59
+                792.69
             ]
         },
         {
             "name": "Hardik Pandya",
-            "aura_score": 766.15,
+            "aura_score": 766.25,
             "previous_aura_score": 766.15,
             "trend_7_days": [
                 766.35,
                 766.35,
                 766.35,
                 766.35,
-                766.35,
                 766.15,
-                766.15
+                766.15,
+                766.25
             ]
         },
         {
             "name": "Suriya",
-            "aura_score": 750.33,
+            "aura_score": 750.63,
             "previous_aura_score": 750.33,
             "trend_7_days": [
                 750.23,
                 750.23,
                 750.23,
                 750.23,
-                750.23,
                 750.33,
-                750.33
+                750.33,
+                750.63
             ]
         },
         {
             "name": "Vijay Deverakonda",
-            "aura_score": 724.25,
+            "aura_score": 724.45,
             "previous_aura_score": 724.25,
             "trend_7_days": [
                 724.15,
                 724.15,
                 724.15,
                 724.15,
-                724.15,
                 724.25,
-                724.25
+                724.25,
+                724.45
             ]
         },
         {
             "name": "Dhanush",
-            "aura_score": 698.79,
+            "aura_score": 698.99,
             "previous_aura_score": 698.79,
             "trend_7_days": [
                 698.69,
                 698.69,
                 698.69,
                 698.69,
-                698.69,
                 698.79,
-                698.79
+                698.79,
+                698.99
             ]
         },
         {
             "name": "Sonu Sood",
-            "aura_score": 674.25,
+            "aura_score": 674.55,
             "previous_aura_score": 674.25,
             "trend_7_days": [
                 674.05,
                 674.05,
                 674.05,
                 674.05,
-                674.05,
                 674.25,
-                674.25
+                674.25,
+                674.55
             ]
         },
         {
             "name": "Kamal Haasan",
-            "aura_score": 648.42,
+            "aura_score": 648.62,
             "previous_aura_score": 648.42,
             "trend_7_days": [
                 648.32,
                 648.32,
                 648.32,
                 648.32,
-                648.32,
                 648.42,
-                648.42
+                648.42,
+                648.62
             ]
         },
         {
@@ -486,7 +486,7 @@
                 616.1,
                 616.1,
                 616.1,
-                616.1,
+                615.9,
                 615.9,
                 615.9
             ]
@@ -500,37 +500,37 @@
                 589.91,
                 589.91,
                 589.91,
-                589.91,
+                589.81,
                 589.81,
                 589.81
             ]
         },
         {
             "name": "Ravindra Jadeja",
-            "aura_score": 577.65,
+            "aura_score": 577.75,
             "previous_aura_score": 577.65,
             "trend_7_days": [
                 577.55,
                 577.55,
                 577.55,
                 577.55,
-                577.55,
                 577.65,
-                577.65
+                577.65,
+                577.75
             ]
         },
         {
             "name": "Kunal Shah",
-            "aura_score": 550.81,
+            "aura_score": 550.91,
             "previous_aura_score": 550.81,
             "trend_7_days": [
                 550.51,
                 550.51,
                 550.51,
                 550.51,
-                550.51,
                 550.81,
-                550.81
+                550.81,
+                550.91
             ]
         },
         {
@@ -542,51 +542,51 @@
                 520.05,
                 520.05,
                 520.05,
-                520.05,
+                520.25,
                 520.25,
                 520.25
             ]
         },
         {
             "name": "Bhuvan Bam",
-            "aura_score": 497.65,
+            "aura_score": 497.75,
             "previous_aura_score": 497.65,
             "trend_7_days": [
                 497.55,
                 497.55,
                 497.55,
                 497.55,
-                497.55,
                 497.65,
-                497.65
+                497.65,
+                497.75
             ]
         },
         {
             "name": "CarryMinati",
-            "aura_score": 471.49,
+            "aura_score": 471.59,
             "previous_aura_score": 471.49,
             "trend_7_days": [
                 471.39,
                 471.39,
                 471.39,
                 471.39,
-                471.39,
                 471.49,
-                471.49
+                471.49,
+                471.59
             ]
         },
         {
             "name": "Zakir Khan",
-            "aura_score": 445.83,
+            "aura_score": 445.93,
             "previous_aura_score": 445.83,
             "trend_7_days": [
                 445.73,
                 445.73,
                 445.73,
                 445.73,
-                445.73,
                 445.83,
-                445.83
+                445.83,
+                445.93
             ]
         },
         {
@@ -598,70 +598,70 @@
                 419.31,
                 419.31,
                 419.31,
-                419.31,
+                419.41,
                 419.41,
                 419.41
             ]
         },
         {
             "name": "Vijay",
-            "aura_score": 400.24,
+            "aura_score": 400.54,
             "previous_aura_score": 400.24,
             "trend_7_days": [
                 400.14,
                 400.14,
                 400.14,
                 400.14,
-                400.14,
                 400.24,
-                400.24
+                400.24,
+                400.54
             ]
         },
         {
             "name": "Kapil Dev",
-            "aura_score": 369.75,
+            "aura_score": 369.85,
             "previous_aura_score": 369.75,
             "trend_7_days": [
                 369.65,
                 369.65,
                 369.65,
                 369.65,
-                369.65,
                 369.75,
-                369.75
+                369.75,
+                369.85
             ]
         },
         {
             "name": "Sunil Gavaskar",
-            "aura_score": 344.86,
+            "aura_score": 344.96,
             "previous_aura_score": 344.86,
             "trend_7_days": [
                 344.76,
                 344.76,
                 344.76,
                 344.76,
-                344.76,
                 344.86,
-                344.86
+                344.86,
+                344.96
             ]
         },
         {
             "name": "Azim Premji",
-            "aura_score": 323.93,
+            "aura_score": 324.43,
             "previous_aura_score": 323.93,
             "trend_7_days": [
                 323.73,
                 323.73,
                 323.73,
                 323.73,
-                323.73,
                 323.93,
-                323.93
+                323.93,
+                324.43
             ]
         },
         {
             "name": "Kailash Kher",
-            "aura_score": 294.9,
+            "aura_score": 295.0,
             "previous_aura_score": 294.9,
             "trend_7_days": [
                 294.9,
@@ -670,12 +670,12 @@
                 294.9,
                 294.9,
                 294.9,
-                294.9
+                295.0
             ]
         },
         {
             "name": "Shankar Mahadevan",
-            "aura_score": 270.07,
+            "aura_score": 270.17,
             "previous_aura_score": 270.07,
             "trend_7_days": [
                 270.07,
@@ -684,21 +684,21 @@
                 270.07,
                 270.07,
                 270.07,
-                270.07
+                270.17
             ]
         },
         {
             "name": "Randeep Hooda",
-            "aura_score": 245.39,
+            "aura_score": 245.49,
             "previous_aura_score": 245.39,
             "trend_7_days": [
                 245.29,
                 245.29,
                 245.29,
                 245.29,
-                245.29,
                 245.39,
-                245.39
+                245.39,
+                245.49
             ]
         }
     ]
